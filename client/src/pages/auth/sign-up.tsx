@@ -20,7 +20,7 @@ const SignUp = () => {
 
     const handleRegister = async (values: { username: string, email: string, password: string }, actions: any) => {
         try {
-            const res = await fetch("http://localhost:8000/api/v1/authentication/register", {
+            const res = await fetch("http://localhost:8000/api/auth/register", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

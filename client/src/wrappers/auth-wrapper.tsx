@@ -12,7 +12,7 @@ function AuthWrapper(WrappedComponent: any) {
         useEffect(() => {
             const verifyAuthToken = async () => {
                 try {
-                    const res = await fetch("http://localhost:8000/api/v1/auth/verify", {
+                    const res = await fetch("http://localhost:8000/api/auth/verify", {
                         method: 'POST',
                         credentials: 'include',
                     });

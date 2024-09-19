@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
     Box,
@@ -16,9 +16,11 @@ import {
     Button,
     useColorMode,
     Spacer,
-    useColorModeValue
+    useColorModeValue,
+    Portal
 } from '@chakra-ui/react'
 import { HamburgerIcon, ViewIcon, SunIcon, MoonIcon, TriangleUpIcon } from '@chakra-ui/icons'
+import AuthWrapper from '../wrappers/auth-wrapper'
 
 // NavItem bileşeni
 const NavItem = ({ icon, children, to, onClick }: { icon: React.ReactNode, children: React.ReactNode, to: string, onClick: (to: string) => void }) => {
@@ -44,7 +46,7 @@ const NavItem = ({ icon, children, to, onClick }: { icon: React.ReactNode, child
 // Sidebar bileşeni
 const Sidebar = ({ onNavigate }: { onNavigate: (to: string) => void }) => {
     return (
-        <VStack align="stretch" spacing={3} p={4}>
+        <VStack align="stretch" spacing={4} p={4}>
             <NavItem icon={<ViewIcon />} to="/dashboard" onClick={onNavigate}>
                 Dashboard
             </NavItem>
@@ -55,33 +57,52 @@ const Sidebar = ({ onNavigate }: { onNavigate: (to: string) => void }) => {
     )
 }
 
-export default function DashboardLayout() {
+function DashboardLayout() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { colorMode, toggleColorMode } = useColorMode()
     const navigate = useNavigate()
     const [isLogoutLoading, setIsLogoutLoading] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
+
+
+    useEffect(() => {
+        setIsMounted(true)
+        return () => setIsMounted(false)
+    }, [])
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth > 768 && isOpen) {
+                onClose()
+            }
+        }
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [isOpen, onClose])
 
     const handleNavigation = useCallback((to: string) => {
         navigate(to)
     }, [navigate])
 
-
-    const handleLogout = useCallback(() => {
+    const handleLogout = useCallback(async () => {
         setIsLogoutLoading(true)
-        setTimeout(async () => {
-            try {
-                const res = await fetch("http://localhost:8000/api/v1/authentication/logout", {
-                    method: "POST",
-                    credentials: "include"
-                });
-                if (res.status === 200) {
-                    navigate('/sig-nin')
-                    setIsLogoutLoading(false)
-                }
-            } catch (error) {
-                throw error;
+        try {
+            const res = await fetch("http://localhost:8000/api/auth/logout", {
+                method: "POST",
+                credentials: "include"
+            })
+            if (res.status === 200) {
+                navigate('/sign-in')
+            } else {
+                // Başarısız logout durumunda kullanıcıya bilgi verilebilir
+                console.error('Logout failed')
             }
-        }, 1000)
+        } catch (error) {
+            console.error('Logout error:', error)
+            // Hata durumunda kullanıcıya bilgi verilebilir
+        } finally {
+            setIsLogoutLoading(false)
+        }
     }, [navigate])
 
     // Renk değerlerini useColorModeValue ile ayarlayalım
@@ -145,39 +166,35 @@ export default function DashboardLayout() {
                     </Button>
                 </Flex>
 
-                <Box flex={1} p={4} overflowY="auto" position="relative">
-                    <Box
-                        position="absolute"
-                        top={0}
-                        left={0}
-                        right={0}
-                        bottom={0}
-                        zIndex={1000}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                    >
-                    </Box>
+                <Box flex={1} p={4} overflowY="auto">
                     <Outlet />
                 </Box>
 
                 {/* Footer */}
-                <Box as="footer" bg={footerBg} p={3} textAlign="center" borderTopWidth="1px" borderTopColor={borderColor}>
+                <Box as="footer" bg={footerBg} p={4} textAlign="center" borderTopWidth="1px" borderTopColor={borderColor}>
                     <Text>&copy; 2024 @Dashboard App</Text>
                 </Box>
             </Flex>
 
-            {/* Mobil için Drawer */}
-            <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
-                <DrawerOverlay />
-                <DrawerContent bg={sidebarBg}>
-                    <DrawerCloseButton />
-                    <DrawerHeader borderBottomWidth="1px" borderBottomColor={borderColor}>Dashboard Menü</DrawerHeader>
-                    <DrawerBody>
-                        <Sidebar onNavigate={handleNavigation} />
-                    </DrawerBody>
-                </DrawerContent>
-            </Drawer>
+            {isMounted && (
+                <Portal>
+                    <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+                        <DrawerOverlay />
+                        <DrawerContent bg={sidebarBg}>
+                            <DrawerCloseButton />
+                            <DrawerHeader borderBottomWidth="1px">Dashboard Menü</DrawerHeader>
+                            <DrawerBody>
+                                <Sidebar onNavigate={(to) => {
+                                    handleNavigation(to)
+                                    onClose()
+                                }} />
+                            </DrawerBody>
+                        </DrawerContent>
+                    </Drawer>
+                </Portal>
+            )}
         </Flex>
     )
 }
+
+export default AuthWrapper(DashboardLayout);

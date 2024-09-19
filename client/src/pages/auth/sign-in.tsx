@@ -16,7 +16,7 @@ const SignIn = () => {
 
     const handleLogin = async (values: { email: string; password: string }, actions: any) => {
         try {
-            const res = await fetch("http://localhost:8000/api/v1/authentication/login", {
+            const res = await fetch("http://localhost:8000/api/auth/login", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
