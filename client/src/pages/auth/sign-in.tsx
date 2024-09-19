@@ -19,7 +19,7 @@ const SignIn = () => {
             const res = await fetch("http://localhost:8000/api/auth/login", {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'applixcation/json',
                 },
                 credentials: "include",
                 body: JSON.stringify(values),
@@ -57,7 +57,6 @@ const SignIn = () => {
             actions.setSubmitting(false);
         }
     }
-
     return (
         <>
             <Box maxWidth="400px" margin="auto" mt={8}>

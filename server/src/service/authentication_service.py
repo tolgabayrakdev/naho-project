@@ -10,7 +10,6 @@ helper = Helper()
 
 
 class AuthenticationService:
-
     @staticmethod
     def verify_user(id: int, db: Session):
         user = db.query(User).filter_by(id=id).first()
