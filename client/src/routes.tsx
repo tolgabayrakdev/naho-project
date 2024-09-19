@@ -9,6 +9,10 @@ const NotFoundPage = lazy(() => import('./pages/not-found'))
 const SignInPage = lazy(() => import('./pages/auth/sign-in'))
 const SignUpPage = lazy(() => import('./pages/auth/sign-up'))
 
+const DashboardLayout = lazy(() => import('./layouts/dashboard-layout'))
+const DashboardIndexPage = lazy(() => import('./pages/dashboard/index'))
+const DashboardProfilePage = lazy(() => import('./pages/dashboard/profile'))
+
 const routes = createBrowserRouter([
     {
         path: "/",
@@ -25,6 +29,14 @@ const routes = createBrowserRouter([
     {
         path: "/sign-up",
         element: <SignUpPage />
+    },
+    {
+        path: "/dashboard",
+        element: <DashboardLayout />,
+        children: [
+            { path: "", element: <DashboardIndexPage /> },
+            { path: "profile", element: <DashboardProfilePage /> },
+        ]
     }
 ])
 

@@ -9,7 +9,7 @@ const NotFound = () => {
                     display="inline-block"
                     as="h2"
                     size="2xl"
-                    bgGradient="linear(to-r, blue.400, blue.600)"
+                    bgGradient="linear(to-r, blue.400, blue.400)"
                     backgroundClip="text"
                 >
                     404
@@ -23,7 +23,6 @@ const NotFound = () => {
 
                 <Button
                     colorScheme="blue"
-                    bgGradient="linear(to-r, blue.400, blue.500, blue.600)"
                     color="white"
                     variant="solid"
                     as={RouterLink}
