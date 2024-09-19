@@ -46,7 +46,7 @@ const NavItem = ({ icon, children, to, onClick }: { icon: React.ReactNode, child
 // Sidebar bileşeni
 const Sidebar = ({ onNavigate }: { onNavigate: (to: string) => void }) => {
     return (
-        <VStack align="stretch" spacing={4} p={4}>
+        <VStack align="stretch" spacing={3} p={4}>
             <NavItem icon={<ViewIcon />} to="/dashboard" onClick={onNavigate}>
                 Dashboard
             </NavItem>
@@ -86,7 +86,7 @@ function DashboardLayout() {
 
     const handleLogout = useCallback(async () => {
         setIsLogoutLoading(true);
-        setTimeout(async() => {
+        setTimeout(async () => {
             try {
                 const res = await fetch("http://localhost:8000/api/auth/logout", {
                     method: "POST",
