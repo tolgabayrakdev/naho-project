@@ -85,24 +85,24 @@ function DashboardLayout() {
     }, [navigate])
 
     const handleLogout = useCallback(async () => {
-        setIsLogoutLoading(true)
-        try {
-            const res = await fetch("http://localhost:8000/api/auth/logout", {
-                method: "POST",
-                credentials: "include"
-            })
-            if (res.status === 200) {
-                navigate('/sign-in')
-            } else {
-                // Başarısız logout durumunda kullanıcıya bilgi verilebilir
-                console.error('Logout failed')
+        setIsLogoutLoading(true);
+        setTimeout(async() => {
+            try {
+                const res = await fetch("http://localhost:8000/api/auth/logout", {
+                    method: "POST",
+                    credentials: "include"
+                })
+                if (res.status === 200) {
+                    navigate('/sign-in')
+                } else {
+                    console.error('Logout failed')
+                }
+            } catch (error) {
+                console.error('Logout error:', error)
+            } finally {
+                setIsLogoutLoading(false)
             }
-        } catch (error) {
-            console.error('Logout error:', error)
-            // Hata durumunda kullanıcıya bilgi verilebilir
-        } finally {
-            setIsLogoutLoading(false)
-        }
+        }, 500)
     }, [navigate])
 
     // Renk değerlerini useColorModeValue ile ayarlayalım
