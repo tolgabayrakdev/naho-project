@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
-from src.schema.user_schema import UserUpdate, PasswordChange
+from ..schema.user_schema import UserUpdate, PasswordChange
 from ..model import User
-from src.util.helper import Helper
+from ..util.helper import Helper
 
 helper = Helper()
 

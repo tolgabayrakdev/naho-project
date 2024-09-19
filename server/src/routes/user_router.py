@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.orm import Session
-from src.database import get_db
-from src.schema.user_schema import UserUpdate, PasswordChange
-from src.service.user_service import UserService
-from src.security.authenticated_user import authenticated_user
+from ..database import get_db
+from ..schema.user_schema import UserUpdate, PasswordChange
+from ..service.user_service import UserService
+from ..security.authenticated_user import authenticated_user
 
 router = APIRouter()
 

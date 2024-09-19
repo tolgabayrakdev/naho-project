@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from ..model import User
-from src.schema.authentication_schema import RegisterSchema
-from src.util.helper import Helper
+from ..schema.authentication_schema import RegisterSchema
+from ..util.helper import Helper
 from sqlalchemy.exc import SQLAlchemyError
 from typing import Dict
 

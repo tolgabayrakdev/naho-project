@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Response, Request, HTTPException, Depends
-from src.service.authentication_service import AuthenticationService
-from src.schema.authentication_schema import LoginSchema, RegisterSchema
+from ..service.authentication_service import AuthenticationService
+from ..schema.authentication_schema import LoginSchema, RegisterSchema
 from sqlalchemy.orm import Session
 from ..database import get_db
 import jwt
-from src.util.helper import Helper
+from ..util.helper import Helper
 from typing import Dict
 
 router = APIRouter()
