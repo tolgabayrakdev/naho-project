@@ -22,7 +22,7 @@ class Helper:
     @classmethod
     def generate_access_token(cls, payload: dict) -> str:
         return jwt.encode(
-            {"payload": payload, "exp": int(time.time()) + 1000},
+            {"payload": payload, "exp": int(time.time()) + 10000},
             "secret_key",
             algorithm="HS256",
         )

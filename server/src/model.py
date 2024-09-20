@@ -19,3 +19,4 @@ class User(Base):
     password = Column(String)
     role_id = Column(Integer, ForeignKey("roles.id"), default=1)
     created_at = Column(DateTime, default=datetime.now())
+
