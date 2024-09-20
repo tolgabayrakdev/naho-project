@@ -138,7 +138,7 @@ function DashboardLayout() {
             <Flex flexDirection="column" flex={1} ml={{ base: 0, md: '250px' }}>
                 <Flex
                     bg={headerBg}
-                    p={4}
+                    p={3}
                     borderBottomWidth="1px"
                     borderBottomColor={borderColor}
                     alignItems="center"

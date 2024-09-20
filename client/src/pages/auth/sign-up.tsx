@@ -37,7 +37,7 @@ const SignUp = () => {
                     isClosable: true,
                 })
                 setTimeout(() => {
-                    navigate('/signin');
+                    navigate('/sign-in');
                 }, 1000)
             } else {
                 toast({
