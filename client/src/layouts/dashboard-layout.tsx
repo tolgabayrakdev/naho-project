@@ -134,7 +134,7 @@ function DashboardLayout() {
     }, [navigate])
 
     // Set color values using useColorModeValue
-    const sidebarBg = useColorModeValue('gray.50', 'gray.900')
+    const sidebarBg = useColorModeValue('white', 'gray.800')
     const borderColor = useColorModeValue('gray.200', 'gray.700')
     const contentBg = useColorModeValue('white', 'gray.800')
 
