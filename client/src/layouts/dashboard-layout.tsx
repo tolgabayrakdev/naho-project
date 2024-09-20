@@ -15,55 +15,83 @@ import {
     Text,
     Button,
     useColorMode,
-    Spacer,
     useColorModeValue,
     Portal
 } from '@chakra-ui/react'
-import { HamburgerIcon, ViewIcon, SunIcon, MoonIcon, TriangleUpIcon } from '@chakra-ui/icons'
+import { HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
+import { BiHome, BiUser } from 'react-icons/bi'
 
-// NavItem bileşeni
+// NavItem component
 const NavItem = ({ icon, children, to, onClick }: { icon: React.ReactNode, children: React.ReactNode, to: string, onClick: (to: string) => void }) => {
     const location = useLocation()
     const active = location.pathname === to
 
+    const activeColor = useColorModeValue("blue.500", "blue.200")
+    const hoverBg = useColorModeValue("gray.100", "gray.700")
+    const textColor = useColorModeValue("gray.800", "whiteAlpha.900")
+
     return (
-        <Button
-            leftIcon={icon ? <>{icon}</> : undefined}
-            variant={active ? "solid" : "ghost"}
-            colorScheme={active ? "blue" : "gray"}
-            justifyContent="flex-start"
-            width="100%"
-            borderRadius="md"
-            mb={2}
+        <Flex
+            align="center"
+            px={3}
+            py={2}
+            cursor="pointer"
+            color={active ? activeColor : textColor}
             onClick={() => onClick(to)}
+            _hover={{ bg: hoverBg }}
+            borderRadius="md"
         >
-            {children}
-        </Button>
+            {icon && <Box mr={3}>{icon}</Box>}
+            <Text fontWeight="normal">{children}</Text>
+        </Flex>
     )
 }
 
-// Sidebar bileşeni
-const Sidebar = ({ onNavigate }: { onNavigate: (to: string) => void }) => {
+// Sidebar component
+const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: string) => void, onLogout: () => void, isLogoutLoading: boolean }) => {
+    const { colorMode, toggleColorMode } = useColorMode()
+
     return (
-        <VStack align="stretch" spacing={3} p={4}>
-            <NavItem icon={<ViewIcon />} to="/dashboard" onClick={onNavigate}>
-                Dashboard
-            </NavItem>
-            <NavItem icon={<TriangleUpIcon />} to="/dashboard/profile" onClick={onNavigate}>
-                Profil
-            </NavItem>
+        <VStack align="stretch" spacing={3} p={4} height="100%">
+            <Box flex={1}>
+                <NavItem icon={<BiHome />} to="/dashboard" onClick={onNavigate}>
+                    Dashboard
+                </NavItem>
+                <NavItem icon={<BiUser />} to="/dashboard/profile" onClick={onNavigate}>
+                    Profil
+                </NavItem>
+            </Box>
+            <Box>
+                <Button
+                    size="sm"
+                    leftIcon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                    onClick={toggleColorMode}
+                    width="100%"
+                    mb={2}
+                >
+                    {colorMode === 'light' ? 'Dark Mode' : 'Light Mode'}
+                </Button>
+                <Button
+                    size="sm"
+                    colorScheme="red"
+                    onClick={onLogout}
+                    isLoading={isLogoutLoading}
+                    loadingText="Çıkış yapılıyor..."
+                    width="100%"
+                >
+                    Çıkış Yap
+                </Button>
+            </Box>
         </VStack>
     )
 }
 
 function DashboardLayout() {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const { colorMode, toggleColorMode } = useColorMode()
     const navigate = useNavigate()
     const [isLogoutLoading, setIsLogoutLoading] = useState(false)
     const [isMounted, setIsMounted] = useState(false)
-
 
     useEffect(() => {
         setIsMounted(true)
@@ -105,15 +133,14 @@ function DashboardLayout() {
         }, 500)
     }, [navigate])
 
-    // Renk değerlerini useColorModeValue ile ayarlayalım
+    // Set color values using useColorModeValue
     const sidebarBg = useColorModeValue('gray.50', 'gray.900')
     const borderColor = useColorModeValue('gray.200', 'gray.700')
-    const headerBg = useColorModeValue('white', 'gray.800')
-    const footerBg = useColorModeValue('gray.100', 'gray.700')
+    const contentBg = useColorModeValue('white', 'gray.800')
 
     return (
         <Flex minH="100vh">
-            {/* Desktop için sabit Sidebar */}
+            {/* Fixed Sidebar for Desktop */}
             <Box
                 width="250px"
                 bg={sidebarBg}
@@ -130,50 +157,23 @@ function DashboardLayout() {
                     <Text fontSize="2xl" fontWeight="bold">Dashboard</Text>
                 </Box>
                 <Box flex={1} overflowY="auto">
-                    <Sidebar onNavigate={handleNavigation} />
+                    <Sidebar onNavigate={handleNavigation} onLogout={handleLogout} isLogoutLoading={isLogoutLoading} />
                 </Box>
             </Box>
 
-            {/* Ana içerik alanı */}
+            {/* Main content area */}
             <Flex flexDirection="column" flex={1} ml={{ base: 0, md: '250px' }}>
-                <Flex
-                    bg={headerBg}
-                    p={3}
-                    borderBottomWidth="1px"
-                    borderBottomColor={borderColor}
-                    alignItems="center"
-                >
+                <Box flex={1} p={4} overflowY="auto" bg={contentBg}>
                     <IconButton
                         icon={<HamburgerIcon />}
                         onClick={onOpen}
                         display={{ base: 'flex', md: 'none' }}
                         aria-label="Open menu"
+                        mb={4}
                     />
-                    <Spacer />
-                    <IconButton
-                        icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-                        onClick={toggleColorMode}
-                        aria-label="Toggle color mode"
-                        mr={2}
-                    />
-                    <Button
-                        colorScheme="red"
-                        onClick={handleLogout}
-                        isLoading={isLogoutLoading}
-                        loadingText="Çıkış yapılıyor..."
-                    >
-                        Çıkış Yap
-                    </Button>
-                </Flex>
-
-                <Box flex={1} p={4} overflowY="auto">
                     <Outlet />
                 </Box>
 
-                {/* Footer */}
-                <Box as="footer" bg={footerBg} p={4} textAlign="center" borderTopWidth="1px" borderTopColor={borderColor}>
-                    <Text>&copy; 2024 @Dashboard App</Text>
-                </Box>
             </Flex>
 
             {isMounted && (
@@ -184,10 +184,14 @@ function DashboardLayout() {
                             <DrawerCloseButton />
                             <DrawerHeader borderBottomWidth="1px">Dashboard Menü</DrawerHeader>
                             <DrawerBody>
-                                <Sidebar onNavigate={(to) => {
-                                    handleNavigation(to)
-                                    onClose()
-                                }} />
+                                <Sidebar
+                                    onNavigate={(to) => {
+                                        handleNavigation(to)
+                                        onClose()
+                                    }}
+                                    onLogout={handleLogout}
+                                    isLogoutLoading={isLogoutLoading}
+                                />
                             </DrawerBody>
                         </DrawerContent>
                     </Drawer>
