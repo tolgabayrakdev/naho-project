@@ -16,16 +16,17 @@ import {
     Button,
     useColorMode,
     useColorModeValue,
-    Portal
+    Portal,
+    Collapse
 } from '@chakra-ui/react'
-import { HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons'
+import { HamburgerIcon, SunIcon, MoonIcon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
-import { BiHome, BiUser } from 'react-icons/bi'
+import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiHome, BiNetworkChart, BiUser } from 'react-icons/bi'
+import { FcElectricity } from 'react-icons/fc'
 
-// NavItem component
-const NavItem = ({ icon, children, to, onClick }: { icon: React.ReactNode, children: React.ReactNode, to: string, onClick: (to: string) => void }) => {
+const NavItem = ({ icon, children, to, onClick, hasSubItems = false, isOpen, onToggle }: { icon: React.ReactNode, children: React.ReactNode, to?: string, onClick?: (to: string) => void, hasSubItems?: boolean, isOpen?: boolean, onToggle?: () => void }) => {
     const location = useLocation()
-    const active = location.pathname === to
+    const active = to ? location.pathname === to : false
 
     const activeColor = useColorModeValue("blue.500", "blue.200")
     const hoverBg = useColorModeValue("gray.100", "gray.700")
@@ -38,12 +39,22 @@ const NavItem = ({ icon, children, to, onClick }: { icon: React.ReactNode, child
             py={2}
             cursor="pointer"
             color={active ? activeColor : textColor}
-            onClick={() => onClick(to)}
+            onClick={() => {
+                if (hasSubItems && onToggle) {
+                    onToggle()
+                } else if (to && onClick) {
+                    onClick(to)
+                }
+            }}
             _hover={{ bg: hoverBg }}
             borderRadius="md"
+            justifyContent="space-between"
         >
-            {icon && <Box mr={3}>{icon}</Box>}
-            <Text fontWeight="normal">{children}</Text>
+            <Flex align="center">
+                {icon && <Box mr={3}>{icon}</Box>}
+                <Text fontWeight="normal">{children}</Text>
+            </Flex>
+            {hasSubItems && (isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />)}
         </Flex>
     )
 }
@@ -51,6 +62,7 @@ const NavItem = ({ icon, children, to, onClick }: { icon: React.ReactNode, child
 // Sidebar component
 const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: string) => void, onLogout: () => void, isLogoutLoading: boolean }) => {
     const { colorMode, toggleColorMode } = useColorMode()
+    const [isNetworkOpen, setIsNetworkOpen] = useState(false)
 
     return (
         <VStack align="stretch" spacing={3} p={4} height="100%">
@@ -61,6 +73,27 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                 <NavItem icon={<BiUser />} to="/dashboard/profile" onClick={onNavigate}>
                     Profil
                 </NavItem>
+                <NavItem
+                    icon={<BiNetworkChart />}
+                    hasSubItems={true}
+                    isOpen={isNetworkOpen}
+                    onToggle={() => setIsNetworkOpen(!isNetworkOpen)}
+                >
+                    Ağ İşlemleri
+                </NavItem>
+                <Collapse in={isNetworkOpen} animateOpacity>
+                    <Box pl={6} mt={1} borderLeft="1px" borderColor="gray.200">
+                        <NavItem icon={<BiCreditCardFront />} to="/dashboard/network/create" onClick={onNavigate}>
+                            Ağ Oluşturma
+                        </NavItem>
+                        <NavItem icon={<BiCreditCard />} to="/dashboard/network/configure" onClick={onNavigate}>
+                            Ağ Yapılandırma
+                        </NavItem>
+                        <NavItem icon={<BiCreditCardAlt />} to="/dashboard/network/edit" onClick={onNavigate}>
+                            Ağ Düzenleme
+                        </NavItem>
+                    </Box>
+                </Collapse>
             </Box>
             <Box>
                 <Button
@@ -154,7 +187,8 @@ function DashboardLayout() {
                 borderRightColor={borderColor}
             >
                 <Box p={4} display="flex" justifyContent="center" alignItems="center">
-                    <Text fontSize="2xl" fontWeight="bold">Dashboard</Text>
+                    <FcElectricity size="1.5em" />
+                    <Text fontSize="2xl" fontWeight="bold">Naho</Text>
                 </Box>
                 <Box flex={1} overflowY="auto">
                     <Sidebar onNavigate={handleNavigation} onLogout={handleLogout} isLogoutLoading={isLogoutLoading} />
@@ -163,7 +197,7 @@ function DashboardLayout() {
 
             {/* Main content area */}
             <Flex flexDirection="column" flex={1} ml={{ base: 0, md: '250px' }}>
-                <Box flex={1} p={4} overflowY="auto" bg={contentBg}>
+                <Box flex={1} p={6} overflowY="auto" bg={contentBg}>
                     <IconButton
                         icon={<HamburgerIcon />}
                         onClick={onOpen}

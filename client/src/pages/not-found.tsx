@@ -1,7 +1,8 @@
 import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 const NotFound = () => {
+    const navigate = useNavigate();
     return (
         <Box textAlign="center" py={10} px={6}>
             <VStack spacing={8}>
@@ -21,14 +22,14 @@ const NotFound = () => {
                     Aradığınız sayfa mevcut değil veya taşınmış olabilir.
                 </Text>
 
+
                 <Button
                     colorScheme="blue"
                     color="white"
                     variant="solid"
-                    as={RouterLink}
-                    to="/"
+                    onClick={() => navigate(-1)}
                 >
-                    Ana Sayfaya Dön
+                    Geri Dön
                 </Button>
             </VStack>
         </Box>
