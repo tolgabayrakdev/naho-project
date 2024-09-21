@@ -17,11 +17,12 @@ import {
     useColorMode,
     useColorModeValue,
     Portal,
-    Collapse
+    Collapse,
+    Divider
 } from '@chakra-ui/react'
 import { HamburgerIcon, SunIcon, MoonIcon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
-import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiHome, BiNetworkChart, BiUser } from 'react-icons/bi'
+import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiGlobeAlt, BiHome, BiMobile, BiNetworkChart, BiUser } from 'react-icons/bi'
 import { FcElectricity } from 'react-icons/fc'
 
 const NavItem = ({ icon, children, to, onClick, hasSubItems = false, isOpen, onToggle }: { icon: React.ReactNode, children: React.ReactNode, to?: string, onClick?: (to: string) => void, hasSubItems?: boolean, isOpen?: boolean, onToggle?: () => void }) => {
@@ -94,6 +95,18 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                         </NavItem>
                     </Box>
                 </Collapse>
+
+                  
+                <Divider my={3} />
+                
+                <Text fontWeight="bold" mb={2}>Tasarım İşlemleri</Text>
+                <NavItem icon={<BiMobile />} to="/design/mobile" onClick={onNavigate}>
+                    Mobil Tasarım
+                </NavItem>
+                <NavItem icon={<BiGlobeAlt />} to="/design/web" onClick={onNavigate}>
+                    Web Tasarım
+                </NavItem>
+
             </Box>
             <Box>
                 <Button
@@ -169,7 +182,7 @@ function DashboardLayout() {
     // Set color values using useColorModeValue
     const sidebarBg = useColorModeValue('white', 'gray.800')
     const borderColor = useColorModeValue('gray.200', 'gray.700')
-    const contentBg = useColorModeValue('white', 'gray.800')
+    const contentBg = useColorModeValue('gray.50', 'gray.800')
 
     return (
         <Flex minH="100vh">

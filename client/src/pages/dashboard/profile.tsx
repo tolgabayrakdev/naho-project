@@ -21,8 +21,13 @@ import {
     Tab,
     TabPanel,
     FormErrorMessage,
+    Divider,
+    SimpleGrid,
+    Text,
+    Switch,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { FaWhatsapp, FaInstagram, FaTwitter, FaFacebook } from 'react-icons/fa';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -41,6 +46,13 @@ const Profile = () => {
         currentPassword: '',
         newPassword: '',
         confirmNewPassword: '',
+    });
+
+    const [integrations, setIntegrations] = useState({
+        whatsapp: false,
+        instagram: false,
+        twitter: false,
+        facebook: false,
     });
 
     useEffect(() => {
@@ -221,11 +233,15 @@ const Profile = () => {
         }
     };
 
+    const handleIntegrationChange = (integration: keyof typeof integrations) => {
+        setIntegrations(prev => ({ ...prev, [integration]: !prev[integration] }));
+    };
+
     return (
         <>
             <Box>
                 <Heading size="md" mb={6}>Profil</Heading>
-                <Tabs>
+                <Tabs variant="enclosed">
                     <TabList>
                         <Tab>Profil Bilgileri</Tab>
                         <Tab>Şifre Değiştir</Tab>
@@ -304,6 +320,38 @@ const Profile = () => {
                     </TabPanels>
                 </Tabs>
 
+                <Divider my={8} />
+
+                <Box>
+                    <Heading size="md" mb={6}>Entegrasyonlar</Heading>
+                    <SimpleGrid columns={2} spacing={4}>
+                        <IntegrationItem
+                            icon={FaWhatsapp}
+                            name="WhatsApp"
+                            isActive={integrations.whatsapp}
+                            onChange={() => handleIntegrationChange('whatsapp')}
+                        />
+                        <IntegrationItem
+                            icon={FaInstagram}
+                            name="Instagram"
+                            isActive={integrations.instagram}
+                            onChange={() => handleIntegrationChange('instagram')}
+                        />
+                        <IntegrationItem
+                            icon={FaTwitter}
+                            name="Twitter"
+                            isActive={integrations.twitter}
+                            onChange={() => handleIntegrationChange('twitter')}
+                        />
+                        <IntegrationItem
+                            icon={FaFacebook}
+                            name="Facebook"
+                            isActive={integrations.facebook}
+                            onChange={() => handleIntegrationChange('facebook')}
+                        />
+                    </SimpleGrid>
+                </Box>
+
                 <AlertDialog
                     isOpen={isDeleteDialogOpen}
                     leastDestructiveRef={cancelRef}
@@ -332,7 +380,25 @@ const Profile = () => {
                 </AlertDialog>
             </Box>
         </>
+    );
+};
 
+interface IntegrationItemProps {
+    icon: React.ElementType;
+    name: string;
+    isActive: boolean;
+    onChange: () => void;
+}
+
+const IntegrationItem: React.FC<IntegrationItemProps> = ({ icon: Icon, name, isActive, onChange }) => {
+    return (
+        <HStack justifyContent="space-between">
+            <HStack>
+                <Icon />
+                <Text>{name}</Text>
+            </HStack>
+            <Switch isChecked={isActive} onChange={onChange} />
+        </HStack>
     );
 };
 
