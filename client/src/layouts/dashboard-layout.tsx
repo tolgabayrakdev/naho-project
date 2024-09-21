@@ -182,7 +182,7 @@ function DashboardLayout() {
     // Set color values using useColorModeValue
     const sidebarBg = useColorModeValue('white', 'gray.800')
     const borderColor = useColorModeValue('gray.200', 'gray.700')
-    const contentBg = useColorModeValue('gray.50', 'gray.900')
+    const contentBg = useColorModeValue('white', 'gray.800')
 
     return (
         <Flex minH="100vh">

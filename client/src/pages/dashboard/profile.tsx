@@ -249,73 +249,77 @@ const Profile = () => {
 
                     <TabPanels>
                         <TabPanel>
-                            <VStack spacing={4} align="stretch">
-                                <FormControl>
-                                    <FormLabel>Kullanıcı Adı</FormLabel>
-                                    <Input
-                                        value={user.username}
-                                        onChange={(e) => setUser({ ...user, username: e.target.value })}
-                                        isReadOnly={!isEditing}
-                                    />
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel>E-posta</FormLabel>
-                                    <Input
-                                        value={user.email}
-                                        onChange={(e) => setUser({ ...user, email: e.target.value })}
-                                        isReadOnly={!isEditing}
-                                    />
-                                </FormControl>
-                                <HStack spacing={4}>
-                                    {isEditing ? (
-                                        <Button size="sm" colorScheme="blue" onClick={handleSave}>Kaydet</Button>
-                                    ) : (
-                                        <Button size="sm" onClick={handleEdit}>Düzenle</Button>
-                                    )}
-                                    <Button size="sm" colorScheme="red" onClick={() => setIsDeleteDialogOpen(true)}>
-                                        Hesabı Sil
-                                    </Button>
-                                </HStack>
-                            </VStack>
+                            <Box maxWidth="400px">
+                                <VStack spacing={4} align="stretch">
+                                    <FormControl>
+                                        <FormLabel>Kullanıcı Adı</FormLabel>
+                                        <Input
+                                            value={user.username}
+                                            onChange={(e) => setUser({ ...user, username: e.target.value })}
+                                            isReadOnly={!isEditing}
+                                        />
+                                    </FormControl>
+                                    <FormControl>
+                                        <FormLabel>E-posta</FormLabel>
+                                        <Input
+                                            value={user.email}
+                                            onChange={(e) => setUser({ ...user, email: e.target.value })}
+                                            isReadOnly={!isEditing}
+                                        />
+                                    </FormControl>
+                                    <HStack spacing={4}>
+                                        {isEditing ? (
+                                            <Button size="sm" colorScheme="blue" onClick={handleSave}>Kaydet</Button>
+                                        ) : (
+                                            <Button size="sm" onClick={handleEdit}>Düzenle</Button>
+                                        )}
+                                        <Button size="sm" colorScheme="red" onClick={() => setIsDeleteDialogOpen(true)}>
+                                            Hesabı Sil
+                                        </Button>
+                                    </HStack>
+                                </VStack>
+                            </Box>
                         </TabPanel>
                         <TabPanel>
-                            <VStack spacing={4} align="stretch">
-                                <FormControl isInvalid={!!errors.currentPassword}>
-                                    <FormLabel>Mevcut Şifre</FormLabel>
-                                    <Input
-                                        type="password"
-                                        value={user.currentPassword}
-                                        onChange={(e) => setUser({ ...user, currentPassword: e.target.value })}
-                                    />
-                                    <FormErrorMessage>{errors.currentPassword}</FormErrorMessage>
-                                </FormControl>
-                                <FormControl isInvalid={!!errors.newPassword}>
-                                    <FormLabel>Yeni Şifre</FormLabel>
-                                    <Input
-                                        type="password"
-                                        value={user.newPassword}
-                                        onChange={(e) => setUser({ ...user, newPassword: e.target.value })}
-                                    />
-                                    <FormErrorMessage>{errors.newPassword}</FormErrorMessage>
-                                </FormControl>
-                                <FormControl isInvalid={!!errors.confirmNewPassword}>
-                                    <FormLabel>Yeni Şifre (Tekrar)</FormLabel>
-                                    <Input
-                                        type="password"
-                                        value={user.confirmNewPassword}
-                                        onChange={(e) => setUser({ ...user, confirmNewPassword: e.target.value })}
-                                    />
-                                    <FormErrorMessage>{errors.confirmNewPassword}</FormErrorMessage>
-                                </FormControl>
-                                <Button
-                                    size="sm"
-                                    colorScheme="green"
-                                    onClick={handleChangePassword}
-                                    width="150px" // Burada genişliği sınırladık
-                                >
-                                    Şifreyi Değiştir
-                                </Button>
-                            </VStack>
+                            <Box maxWidth="400px">
+                                <VStack spacing={4} align="stretch">
+                                    <FormControl isInvalid={!!errors.currentPassword}>
+                                        <FormLabel>Mevcut Şifre</FormLabel>
+                                        <Input
+                                            type="password"
+                                            value={user.currentPassword}
+                                            onChange={(e) => setUser({ ...user, currentPassword: e.target.value })}
+                                        />
+                                        <FormErrorMessage>{errors.currentPassword}</FormErrorMessage>
+                                    </FormControl>
+                                    <FormControl isInvalid={!!errors.newPassword}>
+                                        <FormLabel>Yeni Şifre</FormLabel>
+                                        <Input
+                                            type="password"
+                                            value={user.newPassword}
+                                            onChange={(e) => setUser({ ...user, newPassword: e.target.value })}
+                                        />
+                                        <FormErrorMessage>{errors.newPassword}</FormErrorMessage>
+                                    </FormControl>
+                                    <FormControl isInvalid={!!errors.confirmNewPassword}>
+                                        <FormLabel>Yeni Şifre (Tekrar)</FormLabel>
+                                        <Input
+                                            type="password"
+                                            value={user.confirmNewPassword}
+                                            onChange={(e) => setUser({ ...user, confirmNewPassword: e.target.value })}
+                                        />
+                                        <FormErrorMessage>{errors.confirmNewPassword}</FormErrorMessage>
+                                    </FormControl>
+                                    <Button
+                                        size="sm"
+                                        colorScheme="green"
+                                        onClick={handleChangePassword}
+                                        width="150px"
+                                    >
+                                        Şifreyi Değiştir
+                                    </Button>
+                                </VStack>
+                            </Box>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
