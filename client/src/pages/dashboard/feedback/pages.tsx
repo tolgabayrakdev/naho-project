@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Heading,
@@ -30,9 +30,10 @@ import { AddIcon, DeleteIcon, CopyIcon } from '@chakra-ui/icons';
 
 type FeedbackPage = {
   id: string;
-  companyName: string;
-  token: string;
-  expiresAt: string;
+  title: string;
+  description: string;
+  url_token: string;
+  expires_at: string;
 };
 
 export default function Pages() {
@@ -42,42 +43,84 @@ export default function Pages() {
   const toast = useToast();
 
   useEffect(() => {
-    // Burada normalde API'den feedback page listesini çekeceksiniz
-    // Şimdilik mock data kullanıyoruz
-    const mockPages: FeedbackPage[] = [
-      { id: '1', companyName: 'ABC Şirketi', token: 'abc123', expiresAt: '2023-06-01' },
-      { id: '2', companyName: 'XYZ Ltd.', token: 'def456', expiresAt: '2023-07-01' },
-    ];
-    setFeedbackPages(mockPages);
+    const fetchFeedbackPages = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/feedback-page');
+        const data = await response.json();
+        console.log(data);
+
+        setFeedbackPages(data);
+      } catch (error) {
+        console.error('Error fetching feedback pages:', error);
+        toast({
+          title: "Geri bildirim sayfaları yüklenemedi.",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+    };
+    fetchFeedbackPages();
   }, []);
 
   const handleCreatePage = () => {
-    // Burada normalde API'ye yeni feedback page oluşturma isteği göndereceksiniz
-    const newPage: FeedbackPage = {
-      id: String(feedbackPages.length + 1),
-      companyName: newCompanyName,
-      token: Math.random().toString(36).substr(2, 8),
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 1 ay sonra
+    const newPage = {
+      title: newCompanyName,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     };
-    setFeedbackPages([...feedbackPages, newPage]);
-    onClose();
-    toast({
-      title: "Geri bildirim sayfası oluşturuldu.",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
+
+    fetch('http://localhost:8000/api/feedback-page', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newPage),
+    })
+      .then(response => response.json())
+      .then(data => {
+        setFeedbackPages([...feedbackPages, data]);
+        onClose();
+        toast({
+          title: "Geri bildirim sayfası oluşturuldu.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+      })
+      .catch(error => {
+        console.error('Error creating feedback page:', error);
+        toast({
+          title: "Geri bildirim sayfası oluşturulamadı.",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      });
   };
 
   const handleDeletePage = (id: string) => {
-    // Burada normalde API'ye feedback page silme isteği göndereceksiniz
-    setFeedbackPages(feedbackPages.filter(page => page.id !== id));
-    toast({
-      title: "Geri bildirim sayfası silindi.",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
+    fetch(`http://localhost:8000/api/feedback-page/${id}`, {
+      method: 'DELETE',
+      credentials: "include"
+    })
+      .then(() => {
+        setFeedbackPages(feedbackPages.filter(page => page.id !== id));
+        toast({
+          title: "Geri bildirim sayfası silindi.",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
+      })
+      .catch(error => {
+        console.error('Error deleting feedback page:', error);
+        toast({
+          title: "Geri bildirim sayfası silinemedi.",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      });
   };
 
   const handleCopyToken = (token: string) => {
@@ -107,6 +150,7 @@ export default function Pages() {
         <Thead>
           <Tr>
             <Th>Firma Adı</Th>
+            <Th>Açıklama</Th>
             <Th>Form URL</Th>
             <Th>Bitiş Tarihi</Th>
             <Th>İşlemler</Th>
@@ -115,20 +159,21 @@ export default function Pages() {
         <Tbody>
           {feedbackPages.map((page) => (
             <Tr key={page.id}>
-              <Td>{page.companyName}</Td>
+              <Td>{page.title}</Td>
+              <Td>{page.description}</Td>
               <Td>
-                <Tooltip label={getFormUrl(page.token)}>
-                  <Text isTruncated maxWidth="200px">{getFormUrl(page.token)}</Text>
+                <Tooltip label={getFormUrl(page.url_token)}>
+                  <Text isTruncated maxWidth="200px">{getFormUrl(page.url_token)}</Text>
                 </Tooltip>
               </Td>
-              <Td>{page.expiresAt}</Td>
+              <Td>{page.expires_at}</Td>
               <Td>
                 <IconButton
                   aria-label="Copy form URL"
                   icon={<CopyIcon />}
                   size="sm"
                   mr={2}
-                  onClick={() => handleCopyToken(page.token)}
+                  onClick={() => handleCopyToken(page.url_token)}
                 />
                 <IconButton
                   aria-label="Delete page"
