@@ -15,7 +15,9 @@ import {
   Button,
   useToast,
   Center,
+  useColorModeValue,
 } from '@chakra-ui/react';
+import { format } from 'date-fns'; // date-fns importu
 
 type FeedbackPage = {
   id: string;
@@ -118,55 +120,93 @@ export default function FeedbackForm() {
     );
   }
 
-  return (
-    <Center>
-      <Box p={5} maxWidth="600px" width="100%">
-        <Heading size="lg" textAlign="center">{feedbackPage?.title}</Heading>
-        <Text mt={4} textAlign="center">{feedbackPage?.description}</Text>
-        <Text mt={4} textAlign="center">Oluşturan: {feedbackPage?.username} ({feedbackPage?.email})</Text>
-        <Text mt={4} textAlign="center">Bitiş Tarihi: {feedbackPage?.expires_at}</Text>
+  const formattedExpiresAt = feedbackPage ? format(new Date(feedbackPage.expires_at), 'yyyy-MM-dd HH:mm') : '';
 
-        <Box mt={8}>
-          <Heading size="md" textAlign="center">Geri Bildirim Formu</Heading>
-          <FormControl mt={4}>
-            <FormLabel>Email</FormLabel>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>İçerik</FormLabel>
-            <Textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Bildirim Tipi</FormLabel>
-            <Select
-              value={feedbackType}
-              onChange={(e) => setFeedbackType(e.target.value)}
+  return (
+    <Box
+      minHeight="100vh"
+      bgImage="url('https://plus.unsplash.com/premium_photo-1667354154657-5adc088ed55a?q=80&w=2372&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" // Arka plan resmi
+      bgSize="cover"
+      bgPosition="center"
+      p={5}
+    >
+      <Center>
+        <Box
+          p={8}
+          maxWidth="600px"
+          width="100%"
+          bg={useColorModeValue('white', 'gray.800')}
+          boxShadow="lg"
+          borderRadius="lg"
+          opacity="0.95"
+        >
+          <Heading size="lg" textAlign="center" color={useColorModeValue('teal.600', 'teal.300')}>
+            {feedbackPage?.title}
+          </Heading>
+          <Text mt={4} textAlign="center" color={useColorModeValue('gray.600', 'gray.400')}>
+            {feedbackPage?.description}
+          </Text>
+          <Text mt={4} textAlign="center" color={useColorModeValue('gray.600', 'gray.400')}>
+            Oluşturan: {feedbackPage?.username} ({feedbackPage?.email})
+          </Text>
+          <Text mt={4} textAlign="center" color={useColorModeValue('gray.600', 'gray.400')}>
+            Bitiş Tarihi: {formattedExpiresAt}
+          </Text>
+
+          <Box mt={8}>
+            <Heading size="md" textAlign="center" color={useColorModeValue('teal.600', 'teal.300')}>
+              Geri Bildirim Formu
+            </Heading>
+            <FormControl mt={4}>
+              <FormLabel>Email</FormLabel>
+              <Input
+                focusBorderColor='teal.500'
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                bg={useColorModeValue('gray.50', 'gray.700')}
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>İçerik</FormLabel>
+              <Textarea
+                focusBorderColor='teal.500'
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                bg={useColorModeValue('gray.50', 'gray.700')}
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Bildirim Tipi</FormLabel>
+              <Select
+                focusBorderColor='gray.100'
+                value={feedbackType}
+                onChange={(e) => setFeedbackType(e.target.value)}
+                bg={useColorModeValue('gray.50', 'gray.700')}
+                borderColor={useColorModeValue('gray.200', 'gray.600')}
+                color={getFeedbackTypeColor(feedbackType)}
+              >
+                <option value="tebrik" style={{ color: getFeedbackTypeColor('tebrik') }}>Tebrik</option>
+                <option value="öneri" style={{ color: getFeedbackTypeColor('öneri') }}>Öneri</option>
+                <option value="şikayet" style={{ color: getFeedbackTypeColor('şikayet') }}>Şikayet</option>
+                <option value="istek" style={{ color: getFeedbackTypeColor('istek') }}>İstek</option>
+              </Select>
+            </FormControl>
+            <Button
+              mt={4}
+              colorScheme="teal"
+              onClick={handleSubmit}
+              width="100%"
+              bg={getFeedbackTypeColor(feedbackType)}
+              _hover={{ bg: getFeedbackTypeColor(feedbackType) }}
             >
-              <option value="tebrik">Tebrik</option>
-              <option value="öneri">Öneri</option>
-              <option value="şikayet">Şikayet</option>
-              <option value="istek">İstek</option>
-            </Select>
-          </FormControl>
-          <Button
-            mt={4}
-            colorScheme="blue"
-            onClick={handleSubmit}
-            width="100%"
-            _hover={getFeedbackTypeColor(feedbackType)}
-            bg={getFeedbackTypeColor(feedbackType)}
-          >
-            Gönder
-          </Button>
+              Gönder
+            </Button>
+          </Box>
         </Box>
-      </Box>
-    </Center>
+      </Center>
+    </Box>
   );
 }

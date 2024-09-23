@@ -29,6 +29,7 @@ import {
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, CopyIcon, ViewIcon } from '@chakra-ui/icons';
 import { QRCodeSVG } from 'qrcode.react'; // QRCode importu
+import { format } from 'date-fns'; // date-fns importu
 
 type FeedbackPage = {
   id: string;
@@ -104,7 +105,7 @@ export default function Pages() {
           duration: 2000,
           isClosable: true,
         });
-      });
+      }); 
   };
 
   const handleDeletePage = (id: string) => {
@@ -166,7 +167,7 @@ export default function Pages() {
         </Button>
       </Flex>
 
-      <Table variant="simple">
+      <Table size="sm" variant="simple">
         <Thead>
           <Tr>
             <Th>Başlık</Th>
@@ -186,7 +187,7 @@ export default function Pages() {
                   <Text isTruncated maxWidth="200px">{getFormUrl(page.url_token)}</Text>
                 </Tooltip>
               </Td>
-              <Td>{page.expires_at}</Td>
+              <Td>{format(new Date(page.expires_at), 'yyyy-MM-dd HH:mm')}</Td>
               <Td>
                 <IconButton
                   aria-label="Copy form URL"

@@ -14,6 +14,7 @@ const DashboardProfilePage = lazy(() => import('./pages/dashboard/profile'))
 const DashboardFeedbackPage = lazy(() => import('./pages/dashboard/feedback/index'))
 const DashboardFeedbackForm = lazy(() => import('./pages/dashboard/feedback/pages'))
 const FeedbackForm = lazy(() => import('./pages/forms/FeedbackForm'))  // Yeni import
+const DashboardPreviewPage = lazy(() => import('./pages/dashboard/feedback/preview-page'))
 
 const routes = createBrowserRouter([
     {
@@ -40,10 +41,11 @@ const routes = createBrowserRouter([
             { path: "profile", element: <DashboardProfilePage /> },
             { path: "feedbacks", element: <DashboardFeedbackPage /> },
             { path: "feedback/pages", element: <DashboardFeedbackForm /> },
+            { path: "feedback/preview-page", element: <DashboardPreviewPage /> },
         ]
     },
     {
-        path: "/feedback-form/:token",  // Yeni rota
+        path: "/feedback-form/:token",
         element: <FeedbackForm />,
     }
 ])

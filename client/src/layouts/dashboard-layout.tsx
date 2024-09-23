@@ -22,8 +22,8 @@ import {
 } from '@chakra-ui/react'
 import { HamburgerIcon, SunIcon, MoonIcon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
-import { BiCreditCard, BiCreditCardFront, BiGlobeAlt, BiHome, BiMobile, BiNetworkChart, BiUser } from 'react-icons/bi'
-import { FcElectricity } from 'react-icons/fc'
+import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiGlobeAlt, BiHome, BiMobile, BiNetworkChart, BiUser } from 'react-icons/bi'
+import { FcCollaboration } from 'react-icons/fc'
 
 const NavItem = ({ icon, children, to, onClick, hasSubItems = false, isOpen, onToggle }: { icon: React.ReactNode, children: React.ReactNode, to?: string, onClick?: (to: string) => void, hasSubItems?: boolean, isOpen?: boolean, onToggle?: () => void }) => {
     const location = useLocation()
@@ -89,6 +89,9 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                         </NavItem>
                         <NavItem icon={<BiCreditCard />} to="/dashboard/feedback/pages" onClick={onNavigate}>
                              Bildirim Sayfaları
+                        </NavItem>
+                        <NavItem icon={<BiCreditCardAlt />} to="/dashboard/feedback/preview-page" onClick={onNavigate}>
+                             Önizleme Sayfaları
                         </NavItem>
                     </Box>
                 </Collapse>
@@ -197,7 +200,7 @@ function DashboardLayout() {
                 borderRightColor={borderColor}
             >
                 <Box p={4} display="flex" justifyContent="center" alignItems="center">
-                    <FcElectricity size="1.5em" />
+                    <FcCollaboration size="1.5em" />
                     <Text fontSize="2xl" fontWeight="bold">Naho</Text>
                 </Box>
                 <Box flex={1} overflowY="auto">
