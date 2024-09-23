@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from ..schema.feedback_page_schema import FeedbackPageCreate, FeedbackPageUpdate
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
-from ..model import FeedbackPage
+from ..model import FeedbackPage, User
 from datetime import datetime, timedelta
 import uuid
 
@@ -93,6 +93,18 @@ class FeedbackPageService:
         if feedback:
             if feedback.expires_at < datetime.now(): #type: ignore
                 raise HTTPException(status_code=400, detail="Token has expired")
-            return feedback
+            user = db.query(User).filter(User.id == feedback.user_id).first()
+            if user:
+                return {
+                    "id": feedback.id,
+                    "title": feedback.title,
+                    "description": feedback.description,
+                    "url_token": feedback.url_token,
+                    "expires_at": feedback.expires_at,
+                    "username": user.username,
+                    "email": user.email,
+                }
+            else:
+                raise HTTPException(status_code=404, detail="User not found")
         else:
             raise HTTPException(status_code=404, detail="Feedback not found")

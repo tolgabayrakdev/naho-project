@@ -25,8 +25,10 @@ import {
   IconButton,
   Flex,
   Tooltip,
+  Textarea,
 } from '@chakra-ui/react';
-import { AddIcon, DeleteIcon, CopyIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, CopyIcon, ViewIcon } from '@chakra-ui/icons';
+import { QRCodeSVG } from 'qrcode.react'; // QRCode importu
 
 type FeedbackPage = {
   id: string;
@@ -39,7 +41,12 @@ type FeedbackPage = {
 export default function Pages() {
   const [feedbackPages, setFeedbackPages] = useState<FeedbackPage[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [newCompanyName, setNewCompanyName] = useState('');
+  const [newTitle, setNewTitle] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [pageToDelete, setPageToDelete] = useState<string | null>(null);
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const { isOpen: isQrOpen, onOpen: onQrOpen, onClose: onQrClose } = useDisclosure(); // QR modalı için state
+  const [qrUrl, setQrUrl] = useState<string | null>(null); // QR kodu için URL
   const toast = useToast();
 
   useEffect(() => {
@@ -65,7 +72,8 @@ export default function Pages() {
 
   const handleCreatePage = () => {
     const newPage = {
-      title: newCompanyName,
+      title: newTitle,
+      description: newDescription,
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     };
 
@@ -74,6 +82,7 @@ export default function Pages() {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: "include",
       body: JSON.stringify(newPage),
     })
       .then(response => response.json())
@@ -105,6 +114,7 @@ export default function Pages() {
     })
       .then(() => {
         setFeedbackPages(feedbackPages.filter(page => page.id !== id));
+        onDeleteClose();
         toast({
           title: "Geri bildirim sayfası silindi.",
           status: "success",
@@ -123,6 +133,11 @@ export default function Pages() {
       });
   };
 
+  const confirmDeletePage = (id: string) => {
+    setPageToDelete(id);
+    onDeleteOpen();
+  };
+
   const handleCopyToken = (token: string) => {
     navigator.clipboard.writeText(getFormUrl(token));
     toast({
@@ -131,6 +146,11 @@ export default function Pages() {
       duration: 2000,
       isClosable: true,
     });
+  };
+
+  const handleShowQr = (token: string) => {
+    setQrUrl(getFormUrl(token));
+    onQrOpen();
   };
 
   const getFormUrl = (token: string) => {
@@ -149,7 +169,7 @@ export default function Pages() {
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th>Firma Adı</Th>
+            <Th>Başlık</Th>
             <Th>Açıklama</Th>
             <Th>Form URL</Th>
             <Th>Bitiş Tarihi</Th>
@@ -176,11 +196,18 @@ export default function Pages() {
                   onClick={() => handleCopyToken(page.url_token)}
                 />
                 <IconButton
+                  aria-label="Show QR code"
+                  icon={<ViewIcon />}
+                  size="sm"
+                  mr={2}
+                  onClick={() => handleShowQr(page.url_token)}
+                />
+                <IconButton
                   aria-label="Delete page"
                   icon={<DeleteIcon />}
                   size="sm"
                   colorScheme="red"
-                  onClick={() => handleDeletePage(page.id)}
+                  onClick={() => confirmDeletePage(page.id)}
                 />
               </Td>
             </Tr>
@@ -195,8 +222,14 @@ export default function Pages() {
           <ModalCloseButton />
           <ModalBody>
             <FormControl>
-              <FormLabel>Firma Adı</FormLabel>
-              <Input value={newCompanyName} onChange={(e) => setNewCompanyName(e.target.value)} />
+              <FormLabel>Başlık</FormLabel>
+              <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Açıklama</FormLabel>
+              <Textarea
+                value={newDescription} onChange={(e) => setNewDescription(e.target.value)}
+              />
             </FormControl>
           </ModalBody>
           <ModalFooter>
@@ -204,6 +237,37 @@ export default function Pages() {
               Oluştur
             </Button>
             <Button variant="ghost" onClick={onClose}>İptal</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Geri Bildirim Sayfasını Sil</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Bu sayfayı silmek istediğinizden emin misiniz?</Text>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="red" mr={3} onClick={() => handleDeletePage(pageToDelete!)}>
+              Sil
+            </Button>
+            <Button variant="ghost" onClick={onDeleteClose}>İptal</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      <Modal isOpen={isQrOpen} onClose={onQrClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader display="flex" justifyContent="center">Form URL'si için QR Kodu</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody display="flex" justifyContent="center">
+            {qrUrl && <QRCodeSVG value={qrUrl} size={256} />}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={onQrClose}>Kapat</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

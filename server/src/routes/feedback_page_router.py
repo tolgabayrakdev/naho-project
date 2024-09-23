@@ -24,8 +24,8 @@ def get_all_pages(db: Session = Depends(get_db)):
     return FeedbackPageService.get_all(db=db)
 
 @router.get("/{url_token}")
-def get_page(url_token: str, db: Session = Depends(get_db)):
-    return FeedbackPageService.show(db=db, url_token=url_token)
+def show_feedback_page(url_token: str, db: Session = Depends(get_db)):
+    return FeedbackPageService.show(db, url_token)
 
 
 @router.delete("/{feedback_id}")
