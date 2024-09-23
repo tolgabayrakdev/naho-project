@@ -17,7 +17,7 @@ const Charts = () => {
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
                 <Card>
                     <CardHeader>
-                        <Heading as="h3" size="md">Monthly User Activity</Heading>
+                        <Heading as="h3" size="md">Aylık kullanıcı aktivitesi</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>
@@ -35,7 +35,7 @@ const Charts = () => {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <Heading as="h3" size="md">Revenue Comparison</Heading>
+                        <Heading as="h3" size="md">Ay bazından bildirimler</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>

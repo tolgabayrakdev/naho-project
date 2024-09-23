@@ -22,7 +22,7 @@ import {
 } from '@chakra-ui/react'
 import { HamburgerIcon, SunIcon, MoonIcon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
-import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiGlobeAlt, BiHome, BiMobile, BiNetworkChart, BiUser } from 'react-icons/bi'
+import { BiCreditCard, BiCreditCardFront, BiGlobeAlt, BiHome, BiMobile, BiNetworkChart, BiUser } from 'react-icons/bi'
 import { FcElectricity } from 'react-icons/fc'
 
 const NavItem = ({ icon, children, to, onClick, hasSubItems = false, isOpen, onToggle }: { icon: React.ReactNode, children: React.ReactNode, to?: string, onClick?: (to: string) => void, hasSubItems?: boolean, isOpen?: boolean, onToggle?: () => void }) => {
@@ -80,18 +80,15 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                     isOpen={isNetworkOpen}
                     onToggle={() => setIsNetworkOpen(!isNetworkOpen)}
                 >
-                    Ağ İşlemleri
+                    Bildirim İşlemleri
                 </NavItem>
                 <Collapse in={isNetworkOpen} animateOpacity>
                     <Box pl={6} mt={1} borderLeft="1px" borderColor="gray.200">
-                        <NavItem icon={<BiCreditCardFront />} to="/dashboard/network/create" onClick={onNavigate}>
-                            Ağ Oluşturma
+                        <NavItem icon={<BiCreditCardFront />} to="/dashboard/feedbacks" onClick={onNavigate}>
+                            Geri Bildirimler
                         </NavItem>
-                        <NavItem icon={<BiCreditCard />} to="/dashboard/network/configure" onClick={onNavigate}>
-                            Ağ Yapılandırma
-                        </NavItem>
-                        <NavItem icon={<BiCreditCardAlt />} to="/dashboard/network/edit" onClick={onNavigate}>
-                            Ağ Düzenleme
+                        <NavItem icon={<BiCreditCard />} to="/dashboard/feedback/pages" onClick={onNavigate}>
+                             Bildirim Sayfaları
                         </NavItem>
                     </Box>
                 </Collapse>
@@ -194,7 +191,7 @@ function DashboardLayout() {
                 position="fixed"
                 left={0}
                 top={0}
-                display={{ base: 'none', md: 'flex' }}
+                display={{ base: 'none', lg: 'flex' }}  // Changed from 'md' to 'lg'
                 flexDirection="column"
                 borderRightWidth="1px"
                 borderRightColor={borderColor}
@@ -209,12 +206,12 @@ function DashboardLayout() {
             </Box>
 
             {/* Main content area */}
-            <Flex flexDirection="column" flex={1} ml={{ base: 0, md: '250px' }}>
+            <Flex flexDirection="column" flex={1} ml={{ base: 0, lg: '250px' }}>
                 <Box flex={1} p={6} overflowY="auto" bg={contentBg}>
                     <IconButton
                         icon={<HamburgerIcon />}
                         onClick={onOpen}
-                        display={{ base: 'flex', md: 'none' }}
+                        display={{ base: 'flex', lg: 'none' }} 
                         aria-label="Open menu"
                         mb={4}
                     />
