@@ -108,3 +108,8 @@ class FeedbackPageService:
                 raise HTTPException(status_code=404, detail="User not found")
         else:
             raise HTTPException(status_code=404, detail="Feedback not found")
+
+    @staticmethod
+    def get_user_feedback_pages(db: Session, user_id: int):
+        feedback_pages = db.query(FeedbackPage).filter(FeedbackPage.user_id == user_id).all()
+        return [{"id": page.id, "title": page.title, "url_token": page.url_token} for page in feedback_pages]

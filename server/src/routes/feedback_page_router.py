@@ -31,3 +31,10 @@ def show_feedback_page(url_token: str, db: Session = Depends(get_db)):
 @router.delete("/{feedback_id}")
 def delete_page(feedback_id: int, db: Session = Depends(get_db)):
     return FeedbackPageService.delete(db=db, feedback_id=feedback_id)
+
+@router.get("/user")
+async def get_user_feedback_pages(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(authenticated_user),
+):
+    return FeedbackPageService.get_user_feedback_pages(db=db, user_id=current_user["id"])

@@ -51,6 +51,23 @@ class FeedbackPage(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
 
+
+class PreviewPage(Base):
+    __tablename__ = "preview_pages"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    description = Column(String)
+    url_token = Column(String, unique=True, index=True)
+    expires_at = Column(DateTime)
+    logo_url = Column(String, nullable=True)
+    gradient = Column(String)
+    font = Column(String)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    background_color = Column(String)
+    feedback_page_id = Column(Integer, ForeignKey("feedback_pages.id"))
+
+
 # owner = relationship("User", back_populates="feedback_pages")
 # feedbacks = relationship("Feedback", back_populates="feedback_page", cascade="all, delete-orphan")
 

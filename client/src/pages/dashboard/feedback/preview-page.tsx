@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   VStack,
@@ -29,12 +29,22 @@ import {
   Tr,
   Th,
   Td,
-  IconButton,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from '@chakra-ui/react';
 import { QRCodeSVG } from 'qrcode.react';
-import { DeleteIcon, ViewIcon } from '@chakra-ui/icons';
 
 type FeedbackPage = {
+  id: number;
+  title: string;
+  url_token: string;
+};
+
+type PreviewPage = {
   title: string;
   description: string;
   logo_url?: string;
@@ -42,8 +52,15 @@ type FeedbackPage = {
   font: string;
   background_color: string;
   text_color: string;
-  id: string;
+  feedback_page_id: number | null;
+};
+
+type PreviewPageListItem = {
+  id: number;
+  title: string;
+  description: string;
   url_token: string;
+  created_at: string;
 };
 
 const gradientOptions = [
@@ -72,7 +89,7 @@ export default function PreviewPage() {
   const theme = useTheme();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [page, setPage] = useState<FeedbackPage>({
+  const [page, setPage] = useState<PreviewPage>({
     title: '',
     description: '',
     logo_url: '',
@@ -80,30 +97,35 @@ export default function PreviewPage() {
     font: 'heading',
     background_color: 'white',
     text_color: 'black',
-    id: '',
-    url_token: '',
+    feedback_page_id: null,
   });
   const [publishedUrl, setPublishedUrl] = useState<string | null>(null);
-  const [createdPages, setCreatedPages] = useState<FeedbackPage[]>([]);
+  const [feedbackPages, setFeedbackPages] = useState<FeedbackPage[]>([]);
+  const [previewPages, setPreviewPages] = useState<PreviewPageListItem[]>([]);
+
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    fetchCreatedPages();
+    fetchFeedbackPages();
+    fetchPreviewPages();
   }, []);
 
-  const fetchCreatedPages = async () => {
+  const fetchFeedbackPages = async () => {
     try {
       const response = await fetch('http://localhost:8000/api/feedback-page', {
-        credentials: 'include',
+        credentials: 'include'
       });
       if (!response.ok) {
-        throw new Error('Sayfalar yüklenemedi');
+        throw new Error('Failed to fetch feedback pages');
       }
       const data = await response.json();
-      setCreatedPages(data);
+      setFeedbackPages(data);
     } catch (error) {
-      console.error('Error fetching created pages:', error);
+      console.error('Error fetching feedback pages:', error);
       toast({
-        title: "Sayfalar yüklenemedi.",
+        title: "Feedback sayfaları yüklenemedi.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -111,26 +133,20 @@ export default function PreviewPage() {
     }
   };
 
-  const handleDeletePage = async (id: string) => {
+  const fetchPreviewPages = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/feedback-page/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
+      const response = await fetch('http://localhost:8000/api/preview-page', {
+        credentials: 'include'
       });
       if (!response.ok) {
-        throw new Error('Sayfa silinemedi');
+        throw new Error('Failed to fetch preview pages');
       }
-      setCreatedPages(createdPages.filter(page => page.id !== id));
-      toast({
-        title: "Sayfa başarıyla silindi.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
+      const data = await response.json();
+      setPreviewPages(data);
     } catch (error) {
-      console.error('Error deleting page:', error);
+      console.error('Error fetching preview pages:', error);
       toast({
-        title: "Sayfa silinemedi.",
+        title: "Preview sayfaları yüklenemedi.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -185,14 +201,27 @@ export default function PreviewPage() {
   };
 
   const handlePublish = async () => {
+    if (!page.feedback_page_id) {
+      toast({
+        title: "Lütfen bir feedback sayfası seçin.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:8000/api/feedback-page', {
+      const response = await fetch('http://localhost:8000/api/preview-page', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(page),
+        body: JSON.stringify({
+          ...page,
+          logo_url: page.logo_url || null,  // Eğer logo_url boşsa null gönder
+        }),
       });
 
       if (!response.ok) {
@@ -200,8 +229,8 @@ export default function PreviewPage() {
       }
 
       const data = await response.json();
-      setPublishedUrl(`${window.location.origin}/feedback-form/${data.url_token}`);
-      onOpen(); // Modal'ı aç
+      setPublishedUrl(`${window.location.origin}/preview-page/${data.url_token}`);
+      onOpen();
       toast({
         title: "Sayfa başarıyla yayınlandı.",
         status: "success",
@@ -218,6 +247,53 @@ export default function PreviewPage() {
       });
     }
   };
+
+  const handlePreview = (url_token: string) => {
+    // Yeni bir sekme açarak preview sayfasına yönlendir
+    window.open(`/preview-page/${url_token}`, '_blank');
+  };
+
+  const handleDeleteClick = (id: number) => {
+    setDeleteTargetId(id);
+    setIsDeleteAlertOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (deleteTargetId === null) return;
+
+    try {
+      const response = await fetch(`http://localhost:8000/api/preview-page/${deleteTargetId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete preview page');
+      }
+      setPreviewPages(prevPages => prevPages.filter(page => page.id !== deleteTargetId));
+      toast({
+        title: "Preview sayfası silindi.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error deleting preview page:', error);
+      toast({
+        title: "Preview sayfası silinemedi.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsDeleteAlertOpen(false);
+      setDeleteTargetId(null);
+    }
+  };
+
+  const selectedFeedbackPage = feedbackPages.find(fp => fp.id === Number(page.feedback_page_id));
+  const formUrl = selectedFeedbackPage 
+    ? `${window.location.origin}/feedback-form/${selectedFeedbackPage.url_token}`
+    : '';
 
   return (
     <Container maxW="container.xl" p={3}>
@@ -250,6 +326,20 @@ export default function PreviewPage() {
               <Select name="font" value={page.font} onChange={handleInputChange} size="sm">
                 {fontOptions.map(font => (
                   <option key={font.value} value={font.value}>{font.label}</option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl size="sm">
+              <FormLabel fontSize="sm">Feedback Sayfası</FormLabel>
+              <Select 
+                name="feedback_page_id" 
+                value={page.feedback_page_id || ''} 
+                onChange={handleInputChange} 
+                size="sm"
+              >
+                <option value="">Feedback sayfası seçin</option>
+                {feedbackPages.map(fp => (
+                  <option key={fp.id} value={fp.id}>{fp.title}</option>
                 ))}
               </Select>
             </FormControl>
@@ -296,7 +386,7 @@ export default function PreviewPage() {
               </Text>
               <Box bg="white" p={3} borderRadius="md">
                 <QRCodeSVG 
-                  value={`${window.location.origin}/feedback-form/example`} 
+                  value={formUrl} 
                   size={150}
                 />
               </Box>
@@ -315,40 +405,34 @@ export default function PreviewPage() {
         Yayınla
       </Button>
 
-      <Box mt={8}>
-        <Heading as="h2" size="lg" mb={4}>Oluşturulan Sayfalar</Heading>
-        <Table size="sm" variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Başlık</Th>
-              <Th>Açıklama</Th>
-              <Th>İşlemler</Th>
+      <Heading as="h2" size="lg" mt={8} mb={4}>Oluşturulan Preview Sayfaları</Heading>
+      <Table size="sm" variant="simple">
+        <Thead>
+          <Tr>
+            <Th>Başlık</Th>
+            <Th>Açıklama</Th>
+            <Th>Oluşturulma Tarihi</Th>
+            <Th>İşlemler</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {previewPages.map(previewPage => (
+            <Tr key={previewPage.id}>
+              <Td>{previewPage.title}</Td>
+              <Td>{previewPage.description}</Td>
+              <Td>{new Date(previewPage.created_at).toLocaleString()}</Td>
+              <Td>
+                <Button colorScheme="blue" size="sm" mr={2} onClick={() => handlePreview(previewPage.url_token)}>
+                  Önizle
+                </Button>
+                <Button colorScheme="red" size="sm" onClick={() => handleDeleteClick(previewPage.id)}>
+                  Sil
+                </Button>
+              </Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {createdPages.map((page) => (
-              <Tr key={page.id}>
-                <Td>{page.title}</Td>
-                <Td>{page.description}</Td>
-                <Td>
-                  <IconButton
-                    aria-label="View page"
-                    icon={<ViewIcon />}
-                    mr={2}
-                    onClick={() => window.open(`/feedback-form/${page.url_token}`, '_blank')}
-                  />
-                  <IconButton
-                    aria-label="Delete page"
-                    icon={<DeleteIcon />}
-                    colorScheme="red"
-                    onClick={() => handleDeletePage(page.id)}
-                  />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+          ))}
+        </Tbody>
+      </Table>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -378,6 +462,33 @@ export default function PreviewPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <AlertDialog
+        isOpen={isDeleteAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={() => setIsDeleteAlertOpen(false)}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Preview Sayfasını Sil
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Bu preview sayfasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={() => setIsDeleteAlertOpen(false)}>
+                İptal
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>
+                Sil
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Container>
   );
 }
