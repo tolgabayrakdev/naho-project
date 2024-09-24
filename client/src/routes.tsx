@@ -13,7 +13,7 @@ const DashboardIndexPage = lazy(() => import('./pages/dashboard/index'))
 const DashboardProfilePage = lazy(() => import('./pages/dashboard/profile'))
 const DashboardFeedbackPage = lazy(() => import('./pages/dashboard/feedback/index'))
 const DashboardFeedbackForm = lazy(() => import('./pages/dashboard/feedback/pages'))
-const FeedbackForm = lazy(() => import('./pages/forms/FeedbackForm'))  // Yeni import
+const FeedbackForm = lazy(() => import('./pages/forms/feedback-form'))  // Yeni import
 const PreviewPage = lazy(() => import('./pages/preview/preview-page-ui'))
 
 const DashboardPreviewPage = lazy(() => import('./pages/dashboard/feedback/preview-page'))
