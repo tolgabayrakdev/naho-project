@@ -26,6 +26,3 @@ class PreviewPageResponse(BaseModel):
     user_id: int
     feedback_page_id: int  # Artık zorunlu bir alan
 
-    class Config:
-        from_attributes = True
-

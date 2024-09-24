@@ -12,3 +12,10 @@ def list_feedbacks(
     db: Session = Depends(get_db), current_user: dict = Depends(authenticated_user)
 ):
     return FeedbackService.list(db=db, user_id=current_user["id"])
+
+
+@router.get("/user-feedbacks", status_code=201)
+def list_user_feedbacks(
+    db: Session = Depends(get_db), current_user: dict = Depends(authenticated_user)
+):
+    return FeedbackService.list_by_user(db=db, user_id=current_user["id"])

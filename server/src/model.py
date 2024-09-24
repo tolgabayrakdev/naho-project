@@ -37,7 +37,7 @@ class User(Base):
     subscription_plan = Column(Enum(SubscriptionPlan), default=SubscriptionPlan.free)
 
     # İlişki ekleniyor
-    # feedback_pages = relationship("FeedbackPage", back_populates="owner")
+    #feedback_pages = relationship("FeedbackPage", back_populates="owner")
 
 
 class FeedbackPage(Base):
@@ -50,6 +50,8 @@ class FeedbackPage(Base):
     expires_at = Column(DateTime)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
+    #owner = relationship("User", back_populates="feedback_pages")
+    #feedbacks = relationship("Feedback", back_populates="feedback_page", cascade="all, delete-orphan")
 
 
 class PreviewPage(Base):
@@ -67,9 +69,7 @@ class PreviewPage(Base):
     background_color = Column(String)
     feedback_page_id = Column(Integer, ForeignKey("feedback_pages.id"))
 
-
-# owner = relationship("User", back_populates="feedback_pages")
-# feedbacks = relationship("Feedback", back_populates="feedback_page", cascade="all, delete-orphan")
+    #feedback_page = relationship("FeedbackPage", back_populates="preview_pages")
 
 
 class Feedback(Base):

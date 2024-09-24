@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
-from ..model import Feedback
-from ..database import get_db
+from ..model import Feedback, FeedbackPage, PreviewPage, User
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -30,3 +29,7 @@ class FeedbackService:
             raise HTTPException(
                 status_code=500, detail="An unexpected server error occurred."
             )
+
+    @staticmethod
+    def list_by_user(db: Session, user_id: int):
+        return db.query(Feedback).join(FeedbackPage).join(PreviewPage).filter(PreviewPage.user_id == user_id).all()
