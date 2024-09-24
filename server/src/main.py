@@ -8,6 +8,7 @@ from .routes import (
     preview_page_router,
     user_feedback_router,
     feedback_router,
+    feedback_statics_router,
 )
 from . import model
 from .database import engine
@@ -33,6 +34,7 @@ app.include_router(router=feedback_page_router.router, prefix="/api/feedback-pag
 app.include_router(router=preview_page_router.router, prefix="/api/preview-page")
 app.include_router(router=user_feedback_router.router, prefix="/api/user-feedback")
 app.include_router(router=feedback_router.router, prefix="/api/feedback")
+app.include_router(router=feedback_statics_router.router, prefix="/api/feedback-statics")
 
 
 @app.get("/")
