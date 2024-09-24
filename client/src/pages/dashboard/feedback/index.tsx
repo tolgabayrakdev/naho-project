@@ -39,13 +39,20 @@ type FeedbackType = 'Şikayet' | 'Öneri' | 'İstek' | 'Tebrik';
 
 type FeedbackItem = {
   id: number;
-  userName: string;
-  message: string;
-  type: FeedbackType;
-  createdAt: string;
+  customer_email: string;
+  content: string;
+  feedback_type: FeedbackType;
+  created_at: string;
 };
 
 const ITEMS_PER_PAGE = 10;
+
+const feedbackTypeMap: { [key: string]: string } = {
+  'complaint': 'Şikayet',
+  'suggestion': 'Öneri',
+  'request': 'İstek',
+  'compliment': 'Tebrik'
+};
 
 export default function Index() {
   const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
@@ -63,17 +70,21 @@ export default function Index() {
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   useEffect(() => {
-    // Simüle edilmiş API çağrısı
     setIsLoading(true);
-      const mockData: FeedbackItem[] = Array.from({ length: 500 }, (_, i) => ({
-        id: i + 1,
-        userName: `Kullanıcı${i + 1}`,
-        message: `Geri bildirim mesajı ${i + 1}`,
-        type: ['Şikayet', 'Öneri', 'İstek', 'Tebrik'][Math.floor(Math.random() * 4)] as FeedbackType,
-        createdAt: new Date(Date.now() - Math.random() * 10000000000).toISOString().split('T')[0],
-      }));
-      setFeedbackItems(mockData);
-      setIsLoading(false);
+    fetch('http://localhost:8000/api/feedback/user-feedbacks', {
+      method: "GET",
+      credentials: "include"
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        setFeedbackItems(data);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error("Geri bildirimler alınırken hata oluştu:", error);
+        setIsLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -81,7 +92,7 @@ export default function Index() {
     setTimeout(() => {
       const filtered = filter === 'Tümü'
         ? feedbackItems
-        : feedbackItems.filter(item => item.type === filter);
+        : feedbackItems.filter(item => feedbackTypeMap[item.feedback_type.toLowerCase()] === filter);
       setFilteredItems(filtered);
       setCurrentPage(1);
       setIsLoading(false);
@@ -110,24 +121,62 @@ export default function Index() {
   };
 
   const handleDelete = (id: number) => {
-    setFeedbackItems(prevItems => prevItems.filter(item => item.id !== id));
-    toast({
-      title: "Geri bildirim silindi.",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
+    fetch(`http://localhost:8000/api/feedback/${id}`, {
+      method: "DELETE",
+      credentials: "include"
+    })
+      .then(response => {
+        if (response.ok) {
+          setFeedbackItems(prevItems => prevItems.filter(item => item.id !== id));
+          toast({
+            title: "Geri bildirim silindi.",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        } else {
+          throw new Error("Failed to delete feedback");
+        }
+      })
+      .catch(error => {
+        console.error("Geri bildirim silinirken hata oluştu:", error);
+        toast({
+          title: "Geri bildirim silinirken hata oluştu.",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      });
   };
 
   const handleDeleteAll = () => {
-    setFeedbackItems([]);
-    setIsDeleteAllOpen(false);
-    toast({
-      title: "Tüm geri bildirimler silindi.",
-      status: "success",
-      duration: 2000,
-      isClosable: true,
-    });
+    fetch('http://localhost:8000/api/feedback/user-feedbacks', {
+      method: "DELETE",
+      credentials: "include"
+    })
+      .then(response => {
+        if (response.ok) {
+          setFeedbackItems([]);
+          setIsDeleteAllOpen(false);
+          toast({
+            title: "Tüm geri bildirimler silindi.",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        } else {
+          throw new Error("Failed to delete all feedbacks");
+        }
+      })
+      .catch(error => {
+        console.error("Tüm geri bildirimler silinirken hata oluştu:", error);
+        toast({
+          title: "Tüm geri bildirimler silinirken hata oluştu.",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      });
   };
 
   const handleMessageClick = (item: FeedbackItem) => {
@@ -190,22 +239,22 @@ export default function Index() {
               ? Array(ITEMS_PER_PAGE).fill(0).map((_, index) => <SkeletonRow key={index} />)
               : currentItems.map((item) => (
                   <Tr key={item.id}>
-                    <Td>{item.userName}</Td>
+                    <Td>{item.customer_email}</Td>
                     <Td>
                       <Text 
                         cursor="pointer" 
                         onClick={() => handleMessageClick(item)}
                         _hover={{ textDecoration: 'underline' }}
                       >
-                        {truncateMessage(item.message)}
+                        {truncateMessage(item.content)}
                       </Text>
                     </Td>
                     <Td>
-                      <Tag colorScheme={getFeedbackTypeColor(item.type)}>
-                        {item.type}
+                      <Tag colorScheme={getFeedbackTypeColor(feedbackTypeMap[item.feedback_type.toLowerCase()] as FeedbackType)}>
+                        {feedbackTypeMap[item.feedback_type.toLowerCase()]}
                       </Tag>
                     </Td>
-                    <Td>{item.createdAt}</Td>
+                    <Td>{item.created_at}</Td>
                     <Td>
                       <IconButton
                         aria-label="Sil"
@@ -273,11 +322,11 @@ export default function Index() {
           <ModalBody>
             {selectedFeedback && (
               <>
-                <Text><strong>Kullanıcı:</strong> {selectedFeedback.userName}</Text>
-                <Text><strong>Tür:</strong> {selectedFeedback.type}</Text>
-                <Text><strong>Tarih:</strong> {selectedFeedback.createdAt}</Text>
+                <Text><strong>Kullanıcı:</strong> {selectedFeedback.customer_email}</Text>
+                <Text><strong>Tür:</strong> {feedbackTypeMap[selectedFeedback.feedback_type.toLowerCase()]}</Text>
+                <Text><strong>Tarih:</strong> {selectedFeedback.created_at}</Text>
                 <Text mt={4}><strong>Mesaj:</strong></Text>
-                <Text>{selectedFeedback.message}</Text>
+                <Text>{selectedFeedback.content}</Text>
               </>
             )}
           </ModalBody>
