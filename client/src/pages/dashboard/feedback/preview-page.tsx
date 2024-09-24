@@ -174,16 +174,6 @@ export default function PreviewPage() {
     setPage(prevPage => ({ ...prevPage, [name]: value }));
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPage(prevPage => ({ ...prevPage, logo_url: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handlePublish = async () => {
     if (!page.feedback_page_id) {
@@ -300,10 +290,6 @@ export default function PreviewPage() {
               <Textarea name="description" value={page.description} onChange={handleInputChange} size="sm" />
             </FormControl>
             <FormControl size="sm">
-              <FormLabel fontSize="sm">Logo</FormLabel>
-              <Input type="file" accept="image/*" onChange={handleLogoUpload} size="sm" />
-            </FormControl>
-            <FormControl size="sm">
               <FormLabel fontSize="sm">Arka Plan Gradient</FormLabel>
               <Select name="gradient" value={page.gradient} onChange={handleInputChange} size="sm">
                 {gradientOptions.map(gradient => (
@@ -407,7 +393,7 @@ export default function PreviewPage() {
         </Box>
       </SimpleGrid>
 
-      <Button colorScheme="green" onClick={handlePublish} size="sm" mt={4}>
+      <Button colorScheme="green" onClick={handlePublish} size="sm">
         Yayınla
       </Button>
 
