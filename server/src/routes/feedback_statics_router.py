@@ -7,6 +7,6 @@ from ..service.feedback_statics_service import FeedbackStaticsService
 
 router = APIRouter()
 
-@router.get("/feedback/statics")
+@router.get("/")
 def get_feedback_statics(db: Session = Depends(get_db), current_user: dict = Depends(authenticated_user)):
     return FeedbackStaticsService.get_feedback_statics(db, user_id=current_user["id"])
