@@ -229,6 +229,9 @@ export default function FeedbackForm() {
                 >
                   Gönder
                 </Button>
+                <Text mt={4} textAlign="center" fontSize="small">
+                  Naho tarafından oluşturuldu.
+                </Text>
               </Box>
             </>
           )}

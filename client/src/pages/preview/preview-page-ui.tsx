@@ -51,7 +51,7 @@ export default function PreviewPage() {
         }
         const data = await response.json();
         console.log(data);
-        
+
         setPreviewData(data);
       } catch (err) {
         setError('Bu sayfa mevcut değil');
@@ -76,9 +76,9 @@ export default function PreviewPage() {
           <Box bgGradient={previewData.gradient} p={6}>
             {previewData.logo_url && (
               <Box width="80px" height="80px" borderRadius="full" overflow="hidden" bg="white" mb={4} mx="auto">
-                <Image 
-                  src={previewData.logo_url} 
-                  alt="Company Logo" 
+                <Image
+                  src={previewData.logo_url}
+                  alt="Company Logo"
                   objectFit="cover"
                   width="100%"
                   height="100%"
@@ -92,7 +92,7 @@ export default function PreviewPage() {
               {previewData.description}
             </Text>
           </Box>
-          
+
           <VStack spacing={4} align="stretch" p={6}>
             <Flex align="center" fontFamily={previewData.font}>
               <Icon as={FiUser} mr={2} />
@@ -102,7 +102,7 @@ export default function PreviewPage() {
               <Icon as={FiClock} mr={2} />
               <Text>Son kullanma tarihi: {new Date(previewData.expires_at).toLocaleString()}</Text>
             </Flex>
-            
+
             <VStack spacing={4} align="center" mt={8}>
               <Heading as="h2" size="md" fontFamily={previewData.font}>
                 Geri bildirim formuna erişmek için QR Kodu tarayın:
@@ -111,7 +111,7 @@ export default function PreviewPage() {
                 <QRCodeSVG value={formUrl} size={200} />
               </Box>
             </VStack>
-            
+
             <VStack spacing={2} align="center" mt={6}>
               <Text fontFamily={previewData.font}>veya bu bağlantıyı ziyaret edin:</Text>
               <Link
@@ -125,7 +125,11 @@ export default function PreviewPage() {
                 <Icon as={FiLink} mr={1} />
                 {formUrl}
               </Link>
+              <Text textAlign="center" fontSize="small">
+                Naho tarafından oluşturuldu.
+              </Text>
             </VStack>
+
           </VStack>
         </VStack>
       </Container>
