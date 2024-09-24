@@ -289,7 +289,7 @@ export default function PreviewPage() {
     <Container maxW="container.xl" p={3}>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
         <Box>
-          <Heading as="h2" size="md" mb={3}>Geri Bildirim Sayfası Oluştur</Heading>
+          <Heading as="h2" size="md" mb={3}>Ön izleme Sayfası Oluştur</Heading>
           <VStack spacing={3} align="stretch">
             <FormControl size="sm">
               <FormLabel fontSize="sm">Başlık</FormLabel>
@@ -337,7 +337,7 @@ export default function PreviewPage() {
         </Box>
 
         <Box>
-          <Heading as="h2" size="md" mb={3}>Önizleme</Heading>
+          <Heading as="h2" size="md" mb={3}>Ön izleme</Heading>
           <Box
             minH="60vh"
             bg={bgColor}
