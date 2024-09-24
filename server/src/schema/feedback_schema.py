@@ -16,7 +16,6 @@ class FeedbackBase(BaseModel):
     customer_email: Optional[str] = None
 
 class FeedbackCreate(FeedbackBase):
-    user_id: int
     pass
 
 class FeedbackUpdate(FeedbackBase):

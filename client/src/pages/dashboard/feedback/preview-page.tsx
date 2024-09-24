@@ -13,7 +13,6 @@ import {
   FormLabel,
   Select,
   SimpleGrid,
-  useTheme,
   useToast,
   Modal,
   ModalOverlay,
@@ -35,8 +34,13 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  Flex,
+  Icon,
+  Link,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { QRCodeSVG } from 'qrcode.react';
+import { FiUser, FiClock, FiLink } from 'react-icons/fi';
 
 type FeedbackPage = {
   id: number;
@@ -80,13 +84,21 @@ const gradientOptions = [
 ];
 
 const fontOptions = [
-  { value: 'heading', label: 'Modern' },
-  { value: 'body', label: 'Classic' },
+  { value: 'heading', label: 'Modern (Heading)' },
+  { value: 'body', label: 'Classic (Body)' },
   { value: 'mono', label: 'Monospace' },
+  { value: "'Roboto', sans-serif", label: 'Roboto' },
+  { value: "'Open Sans', sans-serif", label: 'Open Sans' },
+  { value: "'Lato', sans-serif", label: 'Lato' },
+  { value: "'Montserrat', sans-serif", label: 'Montserrat' },
+  { value: "'Poppins', sans-serif", label: 'Poppins' },
+  { value: "'Playfair Display', serif", label: 'Playfair Display' },
+  { value: "'Merriweather', serif", label: 'Merriweather' },
+  { value: "'Oswald', sans-serif", label: 'Oswald' },
+  { value: "'Raleway', sans-serif", label: 'Raleway' },
 ];
 
 export default function PreviewPage() {
-  const theme = useTheme();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [page, setPage] = useState<PreviewPage>({
@@ -106,6 +118,9 @@ export default function PreviewPage() {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
+
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
 
   useEffect(() => {
     fetchFeedbackPages();
@@ -170,36 +185,6 @@ export default function PreviewPage() {
     }
   };
 
-  const handlePrint = () => {
-    const printContent = document.querySelector('.printable-content');
-    const windowPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
-    if (windowPrint && printContent) {
-      windowPrint.document.write(`
-        <html>
-          <head>
-            <title>Print</title>
-            <style>
-              body { font-family: ${theme.fonts[page.font]}; }
-              .gradient-bg { 
-                background-image: ${page.gradient};
-                color: white;
-                padding: 2rem;
-                border-radius: 1rem;
-              }
-            </style>
-          </head>
-          <body>
-            ${printContent.innerHTML}
-          </body>
-        </html>
-      `);
-      windowPrint.document.close();
-      windowPrint.focus();
-      windowPrint.print();
-      windowPrint.close();
-    }
-  };
-
   const handlePublish = async () => {
     if (!page.feedback_page_id) {
       toast({
@@ -237,6 +222,9 @@ export default function PreviewPage() {
         duration: 3000,
         isClosable: true,
       });
+      
+      // Yeni sayfayı oluşturduktan sonra preview sayfalarını yeniden yükle
+      await fetchPreviewPages();
     } catch (error) {
       console.error('Error publishing page:', error);
       toast({
@@ -269,13 +257,15 @@ export default function PreviewPage() {
       if (!response.ok) {
         throw new Error('Failed to delete preview page');
       }
-      setPreviewPages(prevPages => prevPages.filter(page => page.id !== deleteTargetId));
       toast({
         title: "Preview sayfası silindi.",
         status: "success",
         duration: 3000,
         isClosable: true,
       });
+      
+      // Sayfayı sildikten sonra preview sayfalarını yeniden yükle
+      await fetchPreviewPages();
     } catch (error) {
       console.error('Error deleting preview page:', error);
       toast({
@@ -349,58 +339,74 @@ export default function PreviewPage() {
         <Box>
           <Heading as="h2" size="md" mb={3}>Önizleme</Heading>
           <Box
-            bgGradient={page.gradient}
+            minH="60vh"
+            bg={bgColor}
             p={6}
             borderRadius="lg"
             boxShadow="xl"
-            className="printable-content gradient-bg"
+            overflow="hidden"
           >
-            <VStack
-              spacing={4}
-              align="center"
-              color="white"
-              fontFamily={theme.fonts[page.font]}
-            >
-              {page.logo_url && (
-                <Box
-                  width="80px"
-                  height="80px"
-                  borderRadius="full"
-                  overflow="hidden"
-                  bg="white"
-                >
-                  <Image 
-                    src={page.logo_url} 
-                    alt="Company Logo" 
-                    objectFit="cover"
-                    width="100%"
-                    height="100%"
-                  />
-                </Box>
-              )}
-              <Heading as="h1" size="xl" textAlign="center" fontWeight="bold">
-                {page.title || 'Sayfa Başlığı'}
-              </Heading>
-              <Text fontSize="md" textAlign="center">
-                {page.description || 'Sayfa Açıklaması'}
-              </Text>
-              <Box bg="white" p={3} borderRadius="md">
-                <QRCodeSVG 
-                  value={formUrl} 
-                  size={150}
-                />
+            <VStack spacing={6} align="stretch">
+              <Box bgGradient={page.gradient} p={5} borderRadius="lg">
+                {page.logo_url && (
+                  <Box width="70px" height="70px" borderRadius="full" overflow="hidden" bg="white" mb={3} mx="auto">
+                    <Image 
+                      src={page.logo_url} 
+                      alt="Company Logo" 
+                      objectFit="cover"
+                      width="100%"
+                      height="100%"
+                    />
+                  </Box>
+                )}
+                <Heading as="h1" size="lg" color="white" mb={2} fontFamily={page.font} textAlign="center">
+                  {page.title || 'Sayfa Başlığı'}
+                </Heading>
+                <Text fontSize="sm" color="white" fontFamily={page.font} textAlign="center">
+                  {page.description || 'Sayfa Açıklaması'}
+                </Text>
               </Box>
-              <Text fontSize="sm" fontWeight="bold">
-                Geri bildiriminiz için QR kodu okutun
-              </Text>
+              
+              <VStack spacing={3} align="stretch" bg={bgColor} p={4} borderRadius="lg">
+                <Flex align="center" fontFamily={page.font} color={textColor}>
+                  <Icon as={FiUser} mr={2} />
+                  <Text fontSize="sm">Oluşturan: [Kullanıcı Adı]</Text>
+                </Flex>
+                <Flex align="center" fontFamily={page.font} color={textColor}>
+                  <Icon as={FiClock} mr={2} />
+                  <Text fontSize="sm">Son kullanma tarihi: [Tarih]</Text>
+                </Flex>
+                
+                <VStack spacing={3} align="center" mt={4}>
+                  <Heading as="h2" size="sm" fontFamily={page.font} color={textColor}>
+                    Geri bildirim formuna erişmek için QR Kodu tarayın:
+                  </Heading>
+                  <Box bg="white" p={3} borderRadius="md" boxShadow="md">
+                    <QRCodeSVG value={formUrl} size={120} />
+                  </Box>
+                </VStack>
+                
+                <VStack spacing={1} align="center" mt={3}>
+                  <Text fontSize="xs" fontFamily={page.font} color={textColor}>veya bu bağlantıyı ziyaret edin:</Text>
+                  <Link
+                    href={formUrl}
+                    color="blue.500"
+                    _hover={{ color: 'blue.600' }}
+                    display="inline-flex"
+                    alignItems="center"
+                    fontFamily={page.font}
+                    fontSize="xs"
+                  >
+                    <Icon as={FiLink} mr={1} />
+                    {formUrl}
+                  </Link>
+                </VStack>
+              </VStack>
             </VStack>
           </Box>
         </Box>
       </SimpleGrid>
 
-      <Button colorScheme="blue" onClick={handlePrint} size="sm" mt={4} mr={2}>
-        Yazdır / PDF Olarak Kaydet
-      </Button>
       <Button colorScheme="green" onClick={handlePublish} size="sm" mt={4}>
         Yayınla
       </Button>

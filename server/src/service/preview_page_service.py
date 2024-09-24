@@ -82,7 +82,7 @@ class PreviewPageService:
             if preview.expires_at < datetime.now():  # type: ignore
                 raise HTTPException(status_code=400, detail="Token has expired")
             user = db.query(User).filter(User.id == preview.user_id).first()
-            feedback_page = db.query(FeedbackPage).filter(FeedbackPage.id == preview.feedback_page_id).first() if preview.feedback_page_id else None
+            feedback_page = db.query(FeedbackPage).filter(FeedbackPage.id == preview.feedback_page_id).first() if preview.feedback_page_id else None # type: ignore
             if user:
                 return {
                     "id": preview.id,
