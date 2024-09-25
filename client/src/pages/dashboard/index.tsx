@@ -29,27 +29,34 @@ const StatCard = ({ title, value, icon, color }: any) => (
 
 export default function Index() {
   const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null);
+  const [monthlyStats, setMonthlyStats] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchFeedbackStats = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/feedback-statics',{
-          credentials: 'include',
-        });
-        if (!response.ok) {
+        const [statsResponse, monthlyStatsResponse] = await Promise.all([
+          fetch('http://localhost:8000/api/feedback-statics', { credentials: 'include' }),
+          fetch('http://localhost:8000/api/feedback-statics/monthly', { credentials: 'include' })
+        ]);
+
+        if (!statsResponse.ok || !monthlyStatsResponse.ok) {
           throw new Error('Network response was not ok');
         }
-        const data: FeedbackStats = await response.json();
-        setFeedbackStats(data);
+
+        const statsData: FeedbackStats = await statsResponse.json();
+        const monthlyStatsData: any = await monthlyStatsResponse.json();
+
+        setFeedbackStats(statsData);
+        setMonthlyStats(monthlyStatsData);
       } catch (error) {
-        console.error('Error fetching feedback stats:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchFeedbackStats();
+    fetchData();
   }, []);
 
   if (isLoading) {
@@ -91,7 +98,7 @@ export default function Index() {
           color="green.500"
         />
       </SimpleGrid>
-      <Charts />
+      <Charts monthlyStats={monthlyStats} />
     </div>
   )
 }

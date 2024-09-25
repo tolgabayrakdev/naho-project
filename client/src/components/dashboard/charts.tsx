@@ -1,23 +1,35 @@
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Box, SimpleGrid, Heading, Card, CardHeader, CardBody } from '@chakra-ui/react';
+import { Box, VStack, Heading, Card, CardHeader, CardBody } from '@chakra-ui/react';
 
-const data = [
-    { name: 'Jan', uv: 4000, pv: 2400, amt: 2400 },
-    { name: 'Feb', uv: 3000, pv: 1398, amt: 2210 },
-    { name: 'Mar', uv: 2000, pv: 9800, amt: 2290 },
-    { name: 'Apr', uv: 2780, pv: 3908, amt: 2000 },
-    { name: 'May', uv: 1890, pv: 4800, amt: 2181 },
-    { name: 'Jun', uv: 2390, pv: 3800, amt: 2500 },
-    { name: 'Jul', uv: 3490, pv: 4300, amt: 2100 },
-];
+interface MonthlyFeedbackStats {
+  [month: number]: {
+    complaint: number;
+    suggestion: number;
+    request: number;
+    compliment: number;
+  }
+}
 
-const Charts = () => {
+interface ChartsProps {
+  monthlyStats: MonthlyFeedbackStats | null;
+}
+
+const Charts: React.FC<ChartsProps> = ({ monthlyStats }) => {
+    const turkishMonths = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    const data = monthlyStats ? Object.entries(monthlyStats).map(([month, stats]) => ({
+        name: turkishMonths[parseInt(month) - 1],
+        Şikayet: stats.complaint,
+        Öneri: stats.suggestion,
+        İstek: stats.request,
+        Teşekkür: stats.compliment
+    })) : [];
+
     return (
         <Box p={4}>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
+            <VStack spacing={6} align="stretch">
                 <Card>
                     <CardHeader>
-                        <Heading as="h3" size="md">Aylık kullanıcı aktivitesi</Heading>
+                        <Heading as="h3" size="sm">Aylık Geri Bildirim Çizgi Grafiği</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>
@@ -27,15 +39,17 @@ const Charts = () => {
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
-                                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                                <Line type="monotone" dataKey="Şikayet" stroke="#FF0000" />
+                                <Line type="monotone" dataKey="Öneri" stroke="#00FF00" />
+                                <Line type="monotone" dataKey="İstek" stroke="#0000FF" />
+                                <Line type="monotone" dataKey="Teşekkür" stroke="#6c6e6b" />
                             </LineChart>
                         </ResponsiveContainer>
                     </CardBody>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <Heading as="h3" size="md">Ay bazından bildirimler</Heading>
+                        <Heading as="h3" size="sm">Ay Bazında Geri Bildirim Sütun Grafiği</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>
@@ -45,13 +59,15 @@ const Charts = () => {
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
-                                <Bar dataKey="pv" fill="#8884d8" />
-                                <Bar dataKey="uv" fill="#82ca9d" />
+                                <Bar dataKey="Şikayet" fill="#FF0000" />
+                                <Bar dataKey="Öneri" fill="#00FF00" />
+                                <Bar dataKey="İstek" fill="#0000FF" />
+                                <Bar dataKey="Teşekkür" fill="#FF00FF" />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardBody>
                 </Card>
-            </SimpleGrid>
+            </VStack>
         </Box>
     );
 };
