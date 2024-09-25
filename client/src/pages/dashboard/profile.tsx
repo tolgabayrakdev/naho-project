@@ -240,7 +240,7 @@ const Profile = () => {
     return (
         <>
             <Box>
-                <Heading size="md" mb={6}>Profil</Heading>
+                <Heading size="lg" mb={4}>Profil</Heading>
                 <Tabs variant="enclosed">
                     <TabList>
                         <Tab>Profil Bilgileri</Tab>

@@ -1,74 +1,62 @@
-import { Box, Button, Flex, Heading, Text, VStack, Image, Container, SimpleGrid, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, Heading, Text, VStack, Container, useColorModeValue, Icon } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { FaPencilAlt, FaPaperPlane, FaRocket } from "react-icons/fa";
 
 export default function Home() {
-  const headingColor = useColorModeValue("black", "white");
-  const textColor = useColorModeValue("gray.800", "gray.200");
+  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const headingColor = useColorModeValue("blue.600", "blue.300");
+  const textColor = useColorModeValue("gray.600", "gray.300");
 
   return (
-    <Box>
-      <Container maxW="container.xl" py={{ base: 8, md: 10 }}>
-        <Flex direction={{ base: "column", lg: "row" }} align="center" justify="space-between">
-          <VStack align={{ base: "center", lg: "flex-start" }} spacing={6} maxW="600px" mb={{ base: 10, lg: 0 }}>
-            <Heading as="h1" size="2xl" textAlign={{ base: "center", lg: "left" }} color={headingColor}>
-              Müşteri İlişkilerinizi Güçlendirin
+    <Box bg={bgColor} minH="100vh">
+      <Container maxW="container.lg" py={{ base: 16, md: 24 }}>
+        <VStack spacing={12} textAlign="center">
+          <VStack spacing={6}>
+            <Heading as="h1" size="2xl" color={headingColor}>
+              Sesinizi Duyurun
             </Heading>
-            <Text fontSize="xl" textAlign={{ base: "center", lg: "left" }} color={textColor}>
-              Anında bildirimler, detaylı analizler ve kişiselleştirilmiş hizmet araçlarıyla
-              müşterilerinize en iyi deneyimi sunun.
+            <Text fontSize="xl" color={textColor} maxW="2xl">
+              Düşünceleriniz bizim için değerli. Geri bildiriminizle hizmetlerimizi iyileştirmemize yardımcı olun.
             </Text>
-            <Button as={Link} to="/sign-up" colorScheme="blue" size="lg">
-              Hemen Başlayın
-            </Button>
-          </VStack>
-          <Image 
-            src="/path-to-your-image.jpg" 
-            alt="Müşteri hizmetleri görseli"
-            maxW={{ base: "100%", md: "400px", lg: "450px" }}
-            mt={{ base: 8, lg: 0 }}
-          />
-        </Flex>
-      </Container>
-
-      <Box bg={useColorModeValue("gray.50", "gray.800")} py={{ base: 12, md: 16 }}>
-        <Container maxW="container.xl">
-          <VStack spacing={{ base: 8, md: 12 }}>
-            <Heading as="h2" size="xl" textAlign="center" color={headingColor}>
-              Neden Bizi Seçmelisiniz?
-            </Heading>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={{ base: 8, md: 10 }} w="full">
-              {features.map((feature, index) => (
-                <Box key={index} textAlign="center">
-                  <Text fontSize="5xl" mb={4}>{feature.icon}</Text>
-                  <Heading as="h3" size="lg" mb={2} color={headingColor}>{feature.title}</Heading>
-                  <Text color={textColor}>{feature.description}</Text>
-                </Box>
-              ))}
-            </SimpleGrid>
             <Button as={Link} to="/sign-in" colorScheme="blue" size="lg">
               Giriş Yap
             </Button>
           </VStack>
-        </Container>
-      </Box>
+
+          <VStack spacing={8} w="full">
+            <Heading as="h2" size="xl" color={headingColor}>
+              Nasıl Çalışır?
+            </Heading>
+            <VStack spacing={6} w="full">
+              {steps.map((step, index) => (
+                <Box key={index} textAlign="center" w="full">
+                  <Icon as={step.icon} fontSize="3xl" color={headingColor} mb={2} />
+                  <Text fontWeight="bold" fontSize="lg" color={headingColor} mb={1}>{step.title}</Text>
+                  <Text color={textColor}>{step.description}</Text>
+                </Box>
+              ))}
+            </VStack>
+          </VStack>
+        </VStack>
+      </Container>
     </Box>
   );
 }
 
-const features = [
+const steps = [
   {
-    icon: "🔔",
-    title: "Anında Bildirimler",
-    description: "Müşterilerinizden gelen talepleri anında alın ve hızlıca yanıt verin."
+    icon: FaPencilAlt,
+    title: "Geri Bildirim Yazın",
+    description: "Düşüncelerinizi ve önerilerinizi bizimle paylaşın."
   },
   {
-    icon: "📊",
-    title: "Detaylı Analizler",
-    description: "Müşteri davranışlarını analiz edin ve hizmetlerinizi buna göre optimize edin."
+    icon: FaPaperPlane,
+    title: "Gönderin",
+    description: "Geri bildiriminizi hızlıca bize iletin."
   },
   {
-    icon: "🤝",
-    title: "Kişiselleştirilmiş Hizmet",
-    description: "Her müşteriye özel yaklaşım ile memnuniyeti artırın."
+    icon: FaRocket,
+    title: "İyileştirelim",
+    description: "Geri bildiriminiz sayesinde hizmetlerimizi geliştiriyoruz."
   }
 ];
