@@ -18,6 +18,10 @@ const PreviewPage = lazy(() => import('./pages/preview/preview-page-ui'))
 
 const DashboardPreviewPage = lazy(() => import('./pages/dashboard/feedback/preview-page'))
 
+
+
+const DashboardReportPage = lazy(() => import('./pages/dashboard/report/index'));
+
 const routes = createBrowserRouter([
     {
         path: "/",
@@ -44,6 +48,8 @@ const routes = createBrowserRouter([
             { path: "feedbacks", element: <DashboardFeedbackPage /> },
             { path: "feedback/pages", element: <DashboardFeedbackForm /> },
             { path: "feedback/preview-page", element: <DashboardPreviewPage /> },
+
+            { path: "reports", element: <DashboardReportPage /> },
         ]
     },
     {
