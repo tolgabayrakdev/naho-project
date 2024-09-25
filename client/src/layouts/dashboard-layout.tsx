@@ -18,12 +18,13 @@ import {
     useColorModeValue,
     Portal,
     Collapse,
-    Divider
+    Divider,
+    Image
 } from '@chakra-ui/react'
 import { HamburgerIcon, SunIcon, MoonIcon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
-import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiGlobeAlt, BiHome, BiMobile, BiNetworkChart, BiUser } from 'react-icons/bi'
-import { FcCollaboration } from 'react-icons/fc'
+import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiHome, BiNetworkChart, BiUser } from 'react-icons/bi'
+import { BsFileEarmarkDiff, BsFileSlides } from 'react-icons/bs'
 
 const NavItem = ({ icon, children, to, onClick, hasSubItems = false, isOpen, onToggle }: { icon: React.ReactNode, children: React.ReactNode, to?: string, onClick?: (to: string) => void, hasSubItems?: boolean, isOpen?: boolean, onToggle?: () => void }) => {
     const location = useLocation()
@@ -99,12 +100,12 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                   
                 <Divider my={3} />
                 
-                <Text fontWeight="bold" mb={2}>Tasarım İşlemleri</Text>
-                <NavItem icon={<BiMobile />} to="/design/mobile" onClick={onNavigate}>
-                    Mobil Tasarım
+                <Text fontWeight="bold" mb={2}>Rapor İşlemleri</Text>
+                <NavItem icon={<BsFileEarmarkDiff />} to="/design/mobile" onClick={onNavigate}>
+                    Rapor Oluştur
                 </NavItem>
-                <NavItem icon={<BiGlobeAlt />} to="/design/web" onClick={onNavigate}>
-                    Web Tasarım
+                <NavItem icon={<BsFileSlides />} to="/design/web" onClick={onNavigate}>
+                    Rapor Analizi
                 </NavItem>
 
             </Box>
@@ -200,8 +201,7 @@ function DashboardLayout() {
                 borderRightColor={borderColor}
             >
                 <Box p={4} display="flex" justifyContent="center" alignItems="center">
-                    <FcCollaboration size="1.5em" />
-                    <Text fontSize="2xl" fontWeight="bold">Naho</Text>
+                    <Image src="/icon.svg" alt="Naho Icon" boxSize="48px" mr={2} />
                 </Box>
                 <Box flex={1} overflowY="auto">
                     <Sidebar onNavigate={handleNavigation} onLogout={handleLogout} isLogoutLoading={isLogoutLoading} />
