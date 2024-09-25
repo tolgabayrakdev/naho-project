@@ -17,8 +17,6 @@ class FeedbackStaticsService:
                 .group_by(Feedback.feedback_type)\
                 .all()
             
-            print(feedback_counts)
-
             # Sonuçları sözlük olarak hazırla
             result = {feedback_type.value: 0 for feedback_type in FeedbackType}
             for feedback_type, count in feedback_counts:

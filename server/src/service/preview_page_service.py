@@ -32,7 +32,23 @@ class PreviewPageService:
             db.add(preview)
             db.commit()
             db.refresh(preview)
-            return PreviewPageResponse.model_validate(preview)
+            
+            # PreviewPageResponse modeline uygun bir sözlük oluştur
+            preview_dict = {
+                "id": preview.id,
+                "title": preview.title,
+                "description": preview.description,
+                "url_token": preview.url_token,
+                "logo_url": preview.logo_url,
+                "gradient": preview.gradient,
+                "font": preview.font,
+                "expires_at": preview.expires_at,
+                "user_id": preview.user_id,
+                "feedback_page_id": preview.feedback_page_id
+            }
+            
+            # PreviewPageResponse modelini kullanarak doğrulama yap ve döndür
+            return PreviewPageResponse(**preview_dict)
         except SQLAlchemyError:
             db.rollback()
             raise HTTPException(
@@ -64,7 +80,23 @@ class PreviewPageService:
                     setattr(preview, key, value)
                 db.commit()
                 db.refresh(preview)
-                return preview
+                
+                # PreviewPageResponse modeline uygun bir sözlük oluştur
+                preview_dict = {
+                    "id": preview.id,
+                    "title": preview.title,
+                    "description": preview.description,
+                    "url_token": preview.url_token,
+                    "logo_url": preview.logo_url,
+                    "gradient": preview.gradient,
+                    "font": preview.font,
+                    "expires_at": preview.expires_at,
+                    "user_id": preview.user_id,
+                    "feedback_page_id": preview.feedback_page_id
+                }
+                
+                # PreviewPageResponse modelini kullanarak doğrulama yap ve döndür
+                return PreviewPageResponse(**preview_dict)
             else:
                 raise HTTPException(status_code=404, detail="Preview not found")
         except SQLAlchemyError:
