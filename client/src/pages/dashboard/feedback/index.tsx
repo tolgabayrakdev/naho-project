@@ -33,7 +33,7 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
+import { DeleteIcon, ViewIcon } from '@chakra-ui/icons';
 
 type FeedbackType = 'Şikayet' | 'Öneri' | 'İstek' | 'Tebrik';
 
@@ -243,8 +243,6 @@ export default function Index() {
                     <Td>
                       <Text 
                         cursor="pointer" 
-                        onClick={() => handleMessageClick(item)}
-                        _hover={{ textDecoration: 'underline' }}
                       >
                         {truncateMessage(item.content)}
                       </Text>
@@ -256,13 +254,23 @@ export default function Index() {
                     </Td>
                     <Td>{item.created_at}</Td>
                     <Td>
-                      <IconButton
-                        aria-label="Sil"
-                        icon={<DeleteIcon />}
-                        onClick={() => handleDelete(item.id)}
-                        colorScheme="red"
-                        size="sm"
-                      />
+                      <Flex>
+                        <IconButton
+                          aria-label="Önizle"
+                          icon={<ViewIcon />}
+                          onClick={() => handleMessageClick(item)}
+                          colorScheme="blue"
+                          size="sm"
+                          mr={2}
+                        />
+                        <IconButton
+                          aria-label="Sil"
+                          icon={<DeleteIcon />}
+                          onClick={() => handleDelete(item.id)}
+                          colorScheme="red"
+                          size="sm"
+                        />
+                      </Flex>
                     </Td>
                   </Tr>
                 ))
