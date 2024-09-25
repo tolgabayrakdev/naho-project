@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from ..security.authenticated_user import authenticated_user
 from ..database import get_db
 from ..service.user_feedback_service import UserFeedbackService

@@ -10,7 +10,7 @@ class PreviewPageCreate(BaseModel):
     font: str
     background_color: str
     text_color: str
-    feedback_page_id: int  # Artık zorunlu bir alan
+    feedback_page_id: int  
 
 class PreviewPageUpdate(BaseModel):
     title: Optional[str] = None
@@ -24,5 +24,5 @@ class PreviewPageResponse(BaseModel):
     description: str
     expires_at: datetime
     user_id: int
-    feedback_page_id: int  # Artık zorunlu bir alan
+    feedback_page_id: int  
 
