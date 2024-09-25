@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Heading, SimpleGrid, Box, Stat, StatLabel, StatNumber, Icon, Flex, Spinner } from "@chakra-ui/react";
+import { Heading, SimpleGrid, Box, Stat, StatLabel, StatNumber, Icon, Flex } from "@chakra-ui/react";
 import { FaComments, FaSmile, FaLightbulb, FaExclamationCircle, FaQuestionCircle } from 'react-icons/fa';
 import Charts from "../../components/dashboard/charts";
+import Loading from "../../components/loading";
 
 interface FeedbackStats {
   complaint: number;
@@ -60,7 +61,7 @@ export default function Index() {
   }, []);
 
   if (isLoading) {
-    return <Spinner size="xl" />;
+    return <Loading />;
   }
 
   return (

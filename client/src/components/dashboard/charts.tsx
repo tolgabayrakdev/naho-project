@@ -1,5 +1,5 @@
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Box, VStack, Heading, Card, CardHeader, CardBody } from '@chakra-ui/react';
+import { Box, VStack, Heading, Card, CardHeader, CardBody, useColorModeValue } from '@chakra-ui/react';
 
 interface MonthlyFeedbackStats {
   [month: number]: {
@@ -24,45 +24,58 @@ const Charts: React.FC<ChartsProps> = ({ monthlyStats }) => {
         Teşekkür: stats.compliment
     })) : [];
 
+    // Dark mode uyumlu renkler
+    const bgColor = useColorModeValue('white', 'gray.800');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const gridColor = useColorModeValue('#e0e0e0', '#4a4a4a');
+
+    // Yeni renkler
+    const colors = {
+        Şikayet: "#FF6B6B",
+        Öneri: "#FFA500",    // Turuncu
+        İstek: "#8A2BE2",    // Mor
+        Teşekkür: "#4CAF50"  // Yeşil
+    };
+
     return (
         <Box p={4}>
             <VStack spacing={6} align="stretch">
-                <Card>
+                <Card bg={bgColor}>
                     <CardHeader>
-                        <Heading as="h3" size="sm">Aylık Geri Bildirim Çizgi Grafiği</Heading>
+                        <Heading as="h3" size="sm" color={textColor}>Aylık Geri Bildirim Çizgi Grafiği</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>
                             <LineChart data={data}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
+                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                                <XAxis dataKey="name" stroke={textColor} />
+                                <YAxis stroke={textColor} />
+                                <Tooltip contentStyle={{ backgroundColor: bgColor, color: textColor }} />
                                 <Legend />
-                                <Line type="monotone" dataKey="Şikayet" stroke="#FF0000" />
-                                <Line type="monotone" dataKey="Öneri" stroke="#00FF00" />
-                                <Line type="monotone" dataKey="İstek" stroke="#0000FF" />
-                                <Line type="monotone" dataKey="Teşekkür" stroke="#6c6e6b" />
+                                <Line type="monotone" dataKey="Şikayet" stroke={colors.Şikayet} />
+                                <Line type="monotone" dataKey="Öneri" stroke={colors.Öneri} />
+                                <Line type="monotone" dataKey="İstek" stroke={colors.İstek} />
+                                <Line type="monotone" dataKey="Teşekkür" stroke={colors.Teşekkür} />
                             </LineChart>
                         </ResponsiveContainer>
                     </CardBody>
                 </Card>
-                <Card>
+                <Card bg={bgColor}>
                     <CardHeader>
-                        <Heading as="h3" size="sm">Ay Bazında Geri Bildirim Sütun Grafiği</Heading>
+                        <Heading as="h3" size="sm" color={textColor}>Ay Bazında Geri Bildirim Sütun Grafiği</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={data}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
+                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                                <XAxis dataKey="name" stroke={textColor} />
+                                <YAxis stroke={textColor} />
+                                <Tooltip contentStyle={{ backgroundColor: bgColor, color: textColor }} />
                                 <Legend />
-                                <Bar dataKey="Şikayet" fill="#FF0000" />
-                                <Bar dataKey="Öneri" fill="#00FF00" />
-                                <Bar dataKey="İstek" fill="#0000FF" />
-                                <Bar dataKey="Teşekkür" fill="#FF00FF" />
+                                <Bar dataKey="Şikayet" fill={colors.Şikayet} />
+                                <Bar dataKey="Öneri" fill={colors.Öneri} />
+                                <Bar dataKey="İstek" fill={colors.İstek} />
+                                <Bar dataKey="Teşekkür" fill={colors.Teşekkür} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardBody>
