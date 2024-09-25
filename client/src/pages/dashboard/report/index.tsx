@@ -64,27 +64,37 @@ export default function Index() {
     setAnalyzing(true);
     const wordCounts: AnalysisResult = {};
 
-    feedbacks.forEach(feedback => {
-      const words = feedback.content.toLowerCase().split(/\s+/);
-      words.forEach(word => {
-        if (word.length > 3) { // 3 harften uzun kelimeleri sayalım
-          wordCounts[word] = (wordCounts[word] || 0) + 1;
-        }
+    // Analiz işlemini bir Promise içine alıyoruz
+    const performAnalysis = new Promise<void>((resolve) => {
+      feedbacks.forEach(feedback => {
+        const words = feedback.content.toLowerCase().split(/\s+/);
+        words.forEach(word => {
+          if (word.length > 3) {
+            wordCounts[word] = (wordCounts[word] || 0) + 1;
+          }
+        });
       });
+
+      const sortedWords = Object.entries(wordCounts)
+        .sort(([, a], [, b]) => b - a);
+
+      // 5 saniye sonra resolve olacak
+      setTimeout(() => {
+        setAnalysisResult(Object.fromEntries(sortedWords));
+        resolve();
+      }, 5000);
     });
 
-    const sortedWords = Object.entries(wordCounts)
-      .sort(([, a], [, b]) => b - a);
-
-    setAnalysisResult(Object.fromEntries(sortedWords));
-    setAnalyzing(false);
-    setCurrentPage(1); // Analiz tamamlandığında ilk sayfaya dön
-
-    toast({
-      title: 'Analiz tamamlandı',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
+    // Promise tamamlandığında
+    performAnalysis.then(() => {
+      setAnalyzing(false);
+      setCurrentPage(1);
+      toast({
+        title: 'Analiz tamamlandı',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
     });
   };
 
@@ -166,7 +176,12 @@ export default function Index() {
           </Text>
         )}
 
-        {analyzing && <Progress size="xs" isIndeterminate />}
+        {analyzing && (
+          <Box mt={4}>
+            <Progress size="xs" isIndeterminate />
+            <Text mt={2} fontSize="sm" textAlign="center">Analiz ediliyor, lütfen bekleyin...</Text>
+          </Box>
+        )}
 
         {analysisResult && (
           <Box>

@@ -101,7 +101,7 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                 <Divider my={3} />
                 
                 <Text fontWeight="bold" mb={2}>Rapor İşlemleri</Text>
-                <NavItem icon={<BsFileEarmarkDiff />} to="reports" onClick={onNavigate}>
+                <NavItem icon={<BsFileEarmarkDiff />} to="/dashboard/reports" onClick={onNavigate}>
                     Rapor Oluştur
                 </NavItem>
                 <NavItem icon={<BsFileSlides />} to="/design/web" onClick={onNavigate}>
