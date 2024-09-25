@@ -20,12 +20,13 @@ import {
   useDisclosure,
   FormControl,
   FormLabel,
-  Text,
   useToast,
   IconButton,
   Flex,
   Tooltip,
   Textarea,
+  Link,
+  Text,
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, CopyIcon, ViewIcon } from '@chakra-ui/icons';
 import { QRCodeSVG } from 'qrcode.react'; // QRCode importu
@@ -184,7 +185,9 @@ export default function Pages() {
               <Td>{page.description}</Td>
               <Td>
                 <Tooltip label={getFormUrl(page.url_token)}>
-                  <Text isTruncated maxWidth="200px">{getFormUrl(page.url_token)}</Text>
+                  <Link href={getFormUrl(page.url_token)} isExternal color="blue.500" textDecoration="underline">
+                    {getFormUrl(page.url_token).slice(0, 30)}...
+                  </Link>
                 </Tooltip>
               </Td>
               <Td>{format(new Date(page.expires_at), 'yyyy-MM-dd HH:mm')}</Td>
