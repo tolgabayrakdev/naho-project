@@ -1,57 +1,60 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func, extract
-from ..model import Feedback, FeedbackPage, PreviewPage
+from sqlalchemy import func, distinct, extract
+from ..model import Feedback, FeedbackPage, PreviewPage, FeedbackType
 from fastapi import HTTPException
-from datetime import datetime, timedelta
+from datetime import datetime
 
 class FeedbackStaticsService:
 
     @staticmethod
-    def get_feedback_statics(db: Session, user_id: int):
+    def get_feedback_count(db: Session, user_id: int):
         try:
-            # Toplam feedback sayısı
-            total_feedback_count = db.query(func.count(Feedback.id)).join(FeedbackPage).join(PreviewPage).filter(PreviewPage.user_id == user_id).scalar()
+            # Her feedback tipi için sayıları hesapla
+            feedback_counts = db.query(Feedback.feedback_type, func.count(distinct(Feedback.id)))\
+                .join(FeedbackPage)\
+                .join(PreviewPage)\
+                .filter(PreviewPage.user_id == user_id)\
+                .group_by(Feedback.feedback_type)\
+                .all()
+            
+            print(feedback_counts)
 
-            # Aylık feedback sayısı
-            one_month_ago = datetime.now() - timedelta(days=30)
-            monthly_feedback_count = db.query(func.count(Feedback.id)).join(FeedbackPage).join(PreviewPage).filter(
-                PreviewPage.user_id == user_id,
-                Feedback.created_at >= one_month_ago
-            ).scalar()
+            # Sonuçları sözlük olarak hazırla
+            result = {feedback_type.value: 0 for feedback_type in FeedbackType}
+            for feedback_type, count in feedback_counts:
+                result[feedback_type.value] = count
 
-            # Feedback türlerinin toplam sayısı
-            feedback_type_counts = db.query(Feedback.feedback_type, func.count(Feedback.id)).join(FeedbackPage).join(PreviewPage).filter(
-                PreviewPage.user_id == user_id
-            ).group_by(Feedback.feedback_type).all()
+            # Toplam feedback sayısını hesapla
+            total_feedback_count = sum(result.values())
+            result["total_feedback_count"] = total_feedback_count
 
-            # Convert feedback_type_counts to a list of dictionaries
-            feedback_type_counts_dicts = [{"feedback_type": ftc[0], "count": ftc[1]} for ftc in feedback_type_counts]
+            return result
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+        
+    @staticmethod
+    def get_monthly_feedback_count(db: Session, user_id: int):
+        try:
+            current_year = datetime.now().year
+            
+            # Her feedback tipi için aylık sayıları hesapla
+            feedback_counts = db.query(
+                Feedback.feedback_type,
+                func.count(distinct(Feedback.id)).label('count'),
+                extract('month', Feedback.created_at).label('month')
+            ).join(FeedbackPage)\
+             .join(PreviewPage)\
+             .filter(PreviewPage.user_id == user_id)\
+             .filter(extract('year', Feedback.created_at) == current_year)\
+             .group_by(Feedback.feedback_type, extract('month', Feedback.created_at))\
+             .all()
 
-            # Feedback count for each month
-            monthly_feedback_counts = db.query(
-                extract('year', Feedback.created_at).label('year'),
-                extract('month', Feedback.created_at).label('month'),
-                func.count(Feedback.id).label('count')
-            ).join(FeedbackPage).join(PreviewPage).filter(
-                PreviewPage.user_id == user_id
-            ).group_by(
-                extract('year', Feedback.created_at),
-                extract('month', Feedback.created_at)
-            ).order_by(
-                extract('year', Feedback.created_at),
-                extract('month', Feedback.created_at)
-            ).all()
+            # Sonuçları sözlük olarak hazırla
+            result = {month: {feedback_type.value: 0 for feedback_type in FeedbackType} for month in range(1, 13)}
+            
+            for feedback_type, count, month in feedback_counts:
+                result[month][feedback_type.value] = count
 
-            # Convert monthly_feedback_counts to a list of dictionaries
-            monthly_feedback_counts_dicts = [
-                {"year": int(mfc[0]), "month": int(mfc[1]), "count": mfc[2]} for mfc in monthly_feedback_counts
-            ]
-
-            return {
-                "total_feedback_count": total_feedback_count,
-                "monthly_feedback_count": monthly_feedback_count,
-                "feedback_type_counts": feedback_type_counts_dicts,
-                "monthly_feedback_counts": monthly_feedback_counts_dicts
-            }
+            return result
         except Exception as e:
             raise HTTPException(status_code=500, detail=str(e))

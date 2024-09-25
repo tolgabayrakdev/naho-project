@@ -1,27 +1,95 @@
-import { Heading, SimpleGrid, Box, Stat, StatLabel, StatNumber, StatHelpText, Icon } from "@chakra-ui/react";
-import { FaUsers, FaComments, FaEye } from 'react-icons/fa';
+import { useState, useEffect } from "react";
+import { Heading, SimpleGrid, Box, Stat, StatLabel, StatNumber, Icon, Flex, Spinner } from "@chakra-ui/react";
+import { FaComments, FaSmile, FaLightbulb, FaExclamationCircle, FaQuestionCircle } from 'react-icons/fa';
 import Charts from "../../components/dashboard/charts";
 
-const StatCard = ({ title, value, icon }: any) => (
-  <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg">
+interface FeedbackStats {
+  complaint: number;
+  suggestion: number;
+  request: number;
+  compliment: number;
+  total_feedback_count: number;
+}
+
+const StatCard = ({ title, value, icon, color }: any) => (
+  <Box p={3} shadow="md" borderWidth="1px" borderRadius="lg" bg={color} color="white">
     <Stat>
-      <StatLabel fontSize="lg" fontWeight="medium">{title}</StatLabel>
-      <StatNumber fontSize="3xl" fontWeight="bold">{value}</StatNumber>
-      <StatHelpText>
-        <Icon as={icon} w={6} h={6} color="gray.500" />
-      </StatHelpText>
+      <Flex justifyContent="space-between" alignItems="center">
+        <Box>
+          <StatLabel fontSize="sm" fontWeight="medium">{title}</StatLabel>
+          <StatNumber fontSize="xl" fontWeight="bold">{value}</StatNumber>
+        </Box>
+        <Box>
+          <Icon as={icon} w={6} h={6} />
+        </Box>
+      </Flex>
     </Stat>
   </Box>
 );
 
 export default function Index() {
+  const [feedbackStats, setFeedbackStats] = useState<FeedbackStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeedbackStats = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/feedback-statics',{
+          credentials: 'include',
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data: FeedbackStats = await response.json();
+        setFeedbackStats(data);
+      } catch (error) {
+        console.error('Error fetching feedback stats:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeedbackStats();
+  }, []);
+
+  if (isLoading) {
+    return <Spinner size="xl" />;
+  }
+
   return (
     <div>
-      <Heading size="md" mb={6}>Anasayfa</Heading>
-      <SimpleGrid p="3" columns={{ base: 1, md: 3 }} spacing={6} mb={6}>
-        <StatCard title="Toplam Kullanıcı" value="1,234" icon={FaUsers} />
-        <StatCard title="Toplam Geri Bildirim" value="567" icon={FaComments} />
-        <StatCard title="Toplam İzlenme" value="890,123" icon={FaEye} />
+      <Heading size="lg" mb={4}>Dashboard</Heading>
+      <SimpleGrid p="2" columns={{ base: 2, md: 3, lg: 5 }} spacing={4} mb={6}>
+        <StatCard 
+          title="Toplam Geri Bildirim" 
+          value={feedbackStats?.total_feedback_count || 0} 
+          icon={FaComments} 
+          color="blue.500"
+        />
+        <StatCard 
+          title="Şikayetler" 
+          value={feedbackStats?.complaint || 0} 
+          icon={FaExclamationCircle} 
+          color="red.500"
+        />
+        <StatCard 
+          title="Öneriler" 
+          value={feedbackStats?.suggestion || 0} 
+          icon={FaLightbulb} 
+          color="yellow.500"
+        />
+        <StatCard 
+          title="İstekler" 
+          value={feedbackStats?.request || 0} 
+          icon={FaQuestionCircle} 
+          color="purple.500"
+        />
+        <StatCard 
+          title="Teşekkürler" 
+          value={feedbackStats?.compliment || 0} 
+          icon={FaSmile} 
+          color="green.500"
+        />
       </SimpleGrid>
       <Charts />
     </div>
