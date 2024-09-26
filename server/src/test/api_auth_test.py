@@ -29,3 +29,8 @@ def test_register():
     assert response.json() == {"message": "Account created."}
 
 
+def test_logout():
+    response = client.post("api/auth/logout")
+    assert response.status_code == 200
+    assert response.json() == {"message": "You are logged out."}
+
