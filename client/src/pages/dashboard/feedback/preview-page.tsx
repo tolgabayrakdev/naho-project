@@ -195,9 +195,20 @@ export default function PreviewPage() {
         credentials: 'include',
         body: JSON.stringify({
           ...page,
-          logo_url: page.logo_url || null,  // Eğer logo_url boşsa null gönder
+          logo_url: page.logo_url || null,
         }),
       });
+
+      if (response.status === 400) {
+        toast({
+          title: "Sayfa yayınlanamadı.",
+          description: "En fazla 3 tane ön izleme sayfası oluşturabilirsiniz.",
+          status: "warning",
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
 
       if (!response.ok) {
         throw new Error('Sayfa yayınlanamadı');

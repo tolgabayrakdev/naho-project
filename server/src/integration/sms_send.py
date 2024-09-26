@@ -1,15 +1,14 @@
-from twilio.rest import Client
+# Looking to send emails in production? Check out our Email API/SMTP product!
+import requests
 
-# Find your Account SID and Auth Token at twilio.com/console
-# and set the environment variables. See http://twil.io/secure
-account_sid = ""
-auth_token = ""
-client = Client(account_sid, auth_token)
+url = "https://sandbox.api.mailtrap.io/api/send/3163160"
 
-message = client.messages.create(
-    body="Join Earth's mightiest heroes. Like Kevin Bacon.",
-    from_="",
-    to="",
-)
+payload = "{\"from\":{\"email\":\"hello@example.com\",\"name\":\"Mailtrap Test\"},\"to\":[{\"email\":\"tolgabayrakj@gmail.com\"}],\"subject\":\"You are awesome!\",\"text\":\"Congrats for sending test email with Mailtrap!\",\"category\":\"Integration Test\"}"
+headers = {
+  "Authorization": "Bearer 075f20653052674136e6b20a204c0899",
+  "Content-Type": "application/json"
+}
 
-print(message.body)
+response = requests.request("POST", url, headers=headers, data=payload)
+
+print(response.text)

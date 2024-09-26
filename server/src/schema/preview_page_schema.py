@@ -1,10 +1,10 @@
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, Field
 from datetime import datetime
 from typing import Optional
 
 class PreviewPageCreate(BaseModel):
-    title: str
-    description: str
+    title: str = Field(..., min_length=3)
+    description: str = Field(..., min_length=10)
     logo_url: Optional[HttpUrl] = None
     gradient: str
     font: str
@@ -13,8 +13,8 @@ class PreviewPageCreate(BaseModel):
     feedback_page_id: int  
 
 class PreviewPageUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
+    title: Optional[str] = Field(None, min_length=3)
+    description: Optional[str] = Field(None, min_length=10)
     feedback_page_id: Optional[int] = None
 
 class PreviewPageResponse(BaseModel):

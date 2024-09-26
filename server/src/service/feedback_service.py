@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from ..model import Feedback, FeedbackPage, PreviewPage, User
+from ..model import Feedback, FeedbackPage, PreviewPage
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
 

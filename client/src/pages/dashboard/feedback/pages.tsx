@@ -27,6 +27,7 @@ import {
   Textarea,
   Link,
   Text,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, CopyIcon, ViewIcon } from '@chakra-ui/icons';
 import { QRCodeSVG } from 'qrcode.react'; // QRCode importu
@@ -50,6 +51,8 @@ export default function Pages() {
   const { isOpen: isQrOpen, onOpen: onQrOpen, onClose: onQrClose } = useDisclosure(); // QR modalı için state
   const [qrUrl, setQrUrl] = useState<string | null>(null); // QR kodu için URL
   const toast = useToast();
+  const [titleError, setTitleError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
 
   useEffect(() => {
     const fetchFeedbackPages = async () => {
@@ -72,7 +75,42 @@ export default function Pages() {
     fetchFeedbackPages();
   }, []);
 
+  const validateInputs = () => {
+    let isValid = true;
+    
+    if (newTitle.length < 3) {
+      setTitleError('Başlık en az 3 karakter olmalıdır.');
+      isValid = false;
+    } else {
+      setTitleError('');
+    }
+
+    if (newDescription.split(/\s+/).length < 10) {
+      setDescriptionError('Açıklama en az 10 kelime içermelidir.');
+      isValid = false;
+    } else {
+      setDescriptionError('');
+    }
+
+    return isValid;
+  };
+
   const handleCreatePage = () => {
+    if (!validateInputs()) {
+      return;
+    }
+
+    if (feedbackPages.length >= 3) {
+      toast({
+        title: "Sayfa oluşturulamadı.",
+        description: "En fazla 3 geri bildirim sayfası oluşturabilirsiniz.",
+        status: "warning",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const newPage = {
       title: newTitle,
       description: newDescription,
@@ -87,10 +125,20 @@ export default function Pages() {
       credentials: "include",
       body: JSON.stringify(newPage),
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+      })
       .then(data => {
         setFeedbackPages([...feedbackPages, data]);
         onClose();
+        // Reset the modal content
+        setNewTitle('');
+        setNewDescription('');
+        setTitleError('');
+        setDescriptionError('');
         toast({
           title: "Geri bildirim sayfası oluşturuldu.",
           status: "success",
@@ -102,8 +150,9 @@ export default function Pages() {
         console.error('Error creating feedback page:', error);
         toast({
           title: "Geri bildirim sayfası oluşturulamadı.",
+          description: error.detail || "Beklenmeyen bir hata oluştu.",
           status: "error",
-          duration: 2000,
+          duration: 3000,
           isClosable: true,
         });
       }); 
@@ -225,15 +274,18 @@ export default function Pages() {
           <ModalHeader>Yeni Geri Bildirim Sayfası Oluştur</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <FormControl>
+            <FormControl isInvalid={!!titleError}>
               <FormLabel>Başlık</FormLabel>
               <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+              <FormErrorMessage>{titleError}</FormErrorMessage>
             </FormControl>
-            <FormControl mt={4}>
+            <FormControl mt={4} isInvalid={!!descriptionError}>
               <FormLabel>Açıklama</FormLabel>
               <Textarea
-                value={newDescription} onChange={(e) => setNewDescription(e.target.value)}
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
               />
+              <FormErrorMessage>{descriptionError}</FormErrorMessage>
             </FormControl>
           </ModalBody>
           <ModalFooter>

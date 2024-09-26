@@ -12,6 +12,13 @@ class FeedbackPageService:
     @staticmethod
     def create(db: Session, payload: FeedbackPageCreate, user_id: int):
         try:
+            existing_pages_count = db.query(FeedbackPage).filter(FeedbackPage.user_id == user_id).count()
+            if existing_pages_count >= 3:
+                raise HTTPException(
+                    status_code=400,
+                    detail="You can create a maximum of 3 feedback pages."
+                )
+
             expires_at = datetime.now() + timedelta(days=30)
             feedback = FeedbackPage(
                 title=payload.title,
