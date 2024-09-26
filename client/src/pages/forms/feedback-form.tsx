@@ -4,7 +4,6 @@ import {
   Box,
   Heading,
   Text,
-  Spinner,
   Alert,
   AlertIcon,
   FormControl,
@@ -14,14 +13,16 @@ import {
   Select,
   Button,
   useToast,
-  Center,
   useColorModeValue,
   VStack,
   FormErrorMessage,
+  Flex,
+  Container,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import Loading from '../../components/loading';
 
 type FeedbackPage = {
   id: string;
@@ -102,11 +103,11 @@ export default function FeedbackForm() {
           'Content-Type': 'application/json',
         },
         credentials: "include",
-        body: JSON.stringify({ 
-          customer_email: values.email, 
-          content: values.content, 
-          feedback_type: feedbackTypeMap[values.feedbackType] || values.feedbackType, 
-          feedback_page_id: feedbackPage?.id 
+        body: JSON.stringify({
+          customer_email: values.email,
+          content: values.content,
+          feedback_type: feedbackTypeMap[values.feedbackType] || values.feedbackType,
+          feedback_page_id: feedbackPage?.id
         }),
       });
       if (!response.ok) {
@@ -132,15 +133,17 @@ export default function FeedbackForm() {
   };
 
   if (loading) {
-    return <Spinner />;
+    return <Loading />;
   }
 
   if (error) {
     return (
-      <Alert status="error">
-        <AlertIcon />
-        {error}
-      </Alert>
+      <Flex minHeight="100vh" alignItems="center" justifyContent="center" bg={useColorModeValue('gray.50', 'gray.900')}>
+        <Alert status="error" borderRadius="md">
+          <AlertIcon />
+          {error}
+        </Alert>
+      </Flex>
     );
   }
 
@@ -149,96 +152,73 @@ export default function FeedbackForm() {
   return (
     <Box
       minHeight="100vh"
-      bg={useColorModeValue('white', 'gray.800')}
-      backgroundImage="url('https://plus.unsplash.com/premium_photo-1682309735318-934795084028?q=80&w=3012&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')"
-      backgroundSize="cover"
-      backgroundPosition="center"
-      backgroundRepeat="no-repeat"
-      p={5}
+      bg={useColorModeValue('gray.50', 'gray.900')}
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      py={8}
     >
-      <Center>
+      <Container maxW="md">
         <Box
-          p={8}
-          maxWidth="600px"
-          width="100%"
           bg={useColorModeValue('white', 'gray.800')}
-          boxShadow="xl"
-          borderRadius="xl"
-          opacity={0.95}
+          boxShadow="md"
+          borderRadius="lg"
+          p={6}
         >
           {isSubmitted ? (
-            <VStack spacing={4} align="stretch">
-              <Heading size="lg" textAlign="center" color={useColorModeValue('teal.600', 'teal.300')}>
+            <VStack spacing={3} align="stretch">
+              <Heading size="md" textAlign="center" color={useColorModeValue('blue.600', 'blue.300')}>
                 Geri Bildiriminiz Alındı
               </Heading>
-              <Text textAlign="center">
+              <Text textAlign="center" fontSize="sm">
                 Değerli geri bildiriminiz için teşekkür ederiz. Katkınız bizim için çok önemli.
               </Text>
             </VStack>
           ) : (
-            <>
-              <Heading size="lg" textAlign="center" color={useColorModeValue('teal.600', 'teal.300')} mb={6}>
+            <VStack spacing={4} align="stretch">
+              <Heading size="lg" textAlign="center" color={useColorModeValue('blue.600', 'blue.300')}>
                 {feedbackPage?.title}
               </Heading>
-              <Text mb={4} textAlign="center" color={useColorModeValue('gray.600', 'gray.400')}>
+              <Text mb="3" fontSize="sm" textAlign="center" color={useColorModeValue('gray.600', 'gray.400')}>
                 {feedbackPage?.description}
               </Text>
-              <Text mb={4} textAlign="center" color={useColorModeValue('gray.600', 'gray.400')}>
-                Oluşturan: {feedbackPage?.username} ({feedbackPage?.email})
-              </Text>
-              <Text mb={6} textAlign="center" color={useColorModeValue('gray.600', 'gray.400')}>
-                Bitiş Tarihi: {formattedExpiresAt}
-              </Text>
+              <Flex justifyContent="space-between" fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')}>
+                <Text>Oluşturan: {feedbackPage?.username}</Text>
+                <Text>Bitiş: {formattedExpiresAt}</Text>
+              </Flex>
 
-              <Box mt={8}>
-                <Heading size="md" textAlign="center" color={useColorModeValue('teal.600', 'teal.300')} mb={6}>
-                  Geri Bildirim Formu
-                </Heading>
-                <Formik
-                  initialValues={{ email: '', content: '', feedbackType: 'tebrik' }}
-                  validationSchema={validationSchema}
-                  onSubmit={handleSubmit}
-                >
-                  {({ errors, touched, isSubmitting, values }) => (
-                    <Form>
+              <Formik
+                initialValues={{ email: '', content: '', feedbackType: 'tebrik' }}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ errors, touched, isSubmitting, values }) => (
+                  <Form>
+                    <VStack spacing={3}>
                       <Field name="email">
                         {({ field }: any) => (
-                          <FormControl isInvalid={!!(errors.email && touched.email)} mb={4}>
-                            <FormLabel>Email</FormLabel>
+                          <FormControl isInvalid={!!(errors.email && touched.email)}>
+                            <FormLabel fontSize="sm">Email</FormLabel>
                             <Input
                               {...field}
-                              focusBorderColor='teal.500'
-                              bg={useColorModeValue('gray.50', 'gray.700')}
-                              borderColor={useColorModeValue('gray.200', 'gray.600')}
+                              focusBorderColor='blue.500'
+                              bg={useColorModeValue('white', 'gray.700')}
+                              size="sm"
                             />
-                            <FormErrorMessage>{errors.email}</FormErrorMessage>
-                          </FormControl>
-                        )}
-                      </Field>
-                      <Field name="content">
-                        {({ field }: any) => (
-                          <FormControl isInvalid={!!(errors.email && touched.email)} mb={4}>
-                            <FormLabel>İçerik</FormLabel>
-                            <Textarea
-                              {...field}
-                              focusBorderColor='teal.500'
-                              bg={useColorModeValue('gray.50', 'gray.700')}
-                              borderColor={useColorModeValue('gray.200', 'gray.600')}
-                            />
-                            <FormErrorMessage>{errors.content}</FormErrorMessage>
+                            <FormErrorMessage fontSize="xs">{errors.email}</FormErrorMessage>
                           </FormControl>
                         )}
                       </Field>
                       <Field name="feedbackType">
                         {({ field }: any) => (
-                          <FormControl mb={4}>
-                            <FormLabel>Bildirim Tipi</FormLabel>
+                          <FormControl>
+                            <FormLabel fontSize="sm">Bildirim Tipi</FormLabel>
                             <Select
                               {...field}
-                              focusBorderColor='teal.500'
-                              bg={useColorModeValue('gray.50', 'gray.700')}
-                              borderColor={useColorModeValue('gray.200', 'gray.600')}
+                              focusBorderColor='blue.500'
+                              bg={useColorModeValue('white', 'gray.700')}
                               color={getFeedbackTypeColor(feedbackTypeMap[values.feedbackType] || values.feedbackType)}
+                              size="sm"
                             >
                               <option value="tebrik">Tebrik</option>
                               <option value="öneri">Öneri</option>
@@ -248,28 +228,44 @@ export default function FeedbackForm() {
                           </FormControl>
                         )}
                       </Field>
+                      <Field name="content">
+                        {({ field }: any) => (
+                          <FormControl isInvalid={!!(errors.content && touched.content)}>
+                            <FormLabel fontSize="sm">İçerik</FormLabel>
+                            <Textarea
+                              {...field}
+                              focusBorderColor='blue.500'
+                              minHeight="100px"
+                              bg={useColorModeValue('white', 'gray.700')}
+                              size="sm"
+                            />
+                            <FormErrorMessage fontSize="xs">{errors.content}</FormErrorMessage>
+                          </FormControl>
+                        )}
+                      </Field>
                       <Button
-                        mt={4}
-                        colorScheme="teal"
+                        mt={2}
+                        colorScheme="blue"
                         isLoading={isSubmitting}
                         type="submit"
-                        width="100%"
+                        width="full"
                         bg={getFeedbackTypeColor(feedbackTypeMap[values.feedbackType] || values.feedbackType)}
-                        _hover={{ bg: getFeedbackTypeColor(feedbackTypeMap[values.feedbackType] || values.feedbackType), opacity: 0.8 }}
+                        _hover={{ opacity: 0.8 }}
+                        size="sm"
                       >
                         Gönder
                       </Button>
-                    </Form>
-                  )}
-                </Formik>
-                <Text mt={4} textAlign="center" fontSize="small">
-                  Naho tarafından oluşturuldu.
-                </Text>
-              </Box>
-            </>
+                    </VStack>
+                  </Form>
+                )}
+              </Formik>
+            </VStack>
           )}
+          <Text mt={4} textAlign="center" fontSize="xs" color={useColorModeValue('gray.600', 'gray.400')}>
+            Naho tarafından oluşturuldu.
+          </Text>
         </Box>
-      </Center>
+      </Container>
     </Box>
   );
 }
