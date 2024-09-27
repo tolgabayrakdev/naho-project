@@ -16,6 +16,7 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { DownloadIcon, RepeatIcon, SearchIcon } from '@chakra-ui/icons';
 
@@ -167,10 +168,17 @@ export default function Index() {
     }
   };
 
+  // Renk modu değerlerini tanımlayalım
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'gray.100');
+  const headingColor = useColorModeValue('blue.600', 'blue.300');
+  const boxBgColor = useColorModeValue('gray.50', 'gray.700');
+  const boxTextColor = useColorModeValue('blue.700', 'blue.200');
+
   return (
     <Container maxW="container.xl" py={10}>
       <VStack spacing={8} align="stretch">
-        <Heading as="h2" size="xl" textAlign="center" color="blue.600">
+        <Heading as="h2" size="xl" textAlign="center" color={headingColor}>
           Geri Bildirim Raporu
         </Heading>
 
@@ -225,8 +233,8 @@ export default function Index() {
         )}
 
         {analysisResult && (
-          <Box bg="white" shadow="md" borderRadius="lg" p={6}>
-            <Heading as="h4" size="md" mb={6} textAlign="center" color="blue.600">
+          <Box bg={bgColor} shadow="md" borderRadius="lg" p={6}>
+            <Heading as="h4" size="md" mb={6} textAlign="center" color={headingColor}>
               Analiz Sonuçları
             </Heading>
             <Flex mb={6} gap={4} flexDirection={{ base: 'column', md: 'row' }}>
@@ -248,8 +256,8 @@ export default function Index() {
             </Flex>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
               {paginatedResults.map(([sentence, count]) => (
-                <Box key={sentence} p={4} bg="gray.50" borderRadius="md" boxShadow="sm">
-                  <Text fontWeight="medium" mb={2} color="blue.700">{sentence}</Text>
+                <Box key={sentence} p={4} bg={boxBgColor} borderRadius="md" boxShadow="sm">
+                  <Text fontWeight="medium" mb={2} color={boxTextColor}>{sentence}</Text>
                   <Badge colorScheme="green">{count} kez</Badge>
                 </Box>
               ))}
@@ -265,7 +273,7 @@ export default function Index() {
               >
                 Önceki
               </Button>
-              <Text fontSize="sm" fontWeight="bold">
+              <Text fontSize="sm" fontWeight="bold" color={textColor}>
                 Sayfa {currentPage} / {pageCount}
               </Text>
               <Button

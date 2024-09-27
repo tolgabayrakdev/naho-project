@@ -204,15 +204,15 @@ export default function Index() {
   return (
     <Box p={5}>
       <Box width="fit-content">
-      <Heading size="lg" mb={2}>Geri Bildirimler</Heading>
-        <Divider borderWidth="1px" mb={4} />
+        <Heading color="blue.600" size="lg" mb={2}>Geri Bildirimler</Heading>
+        <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
       </Box>
       <Flex justifyContent="space-between" alignItems="center" mb={5}>
         <Text>Toplam: {isLoading ? <SkeletonText noOfLines={1} width="100px" /> : `${filteredItems.length} geri bildirim`}</Text>
         <Flex>
-          <Select 
-            width="200px" 
-            value={filter} 
+          <Select
+            width="200px"
+            value={filter}
             onChange={(e) => setFilter(e.target.value as FeedbackType | 'Tümü')}
             mr={2}
             isDisabled={isLoading}
@@ -241,46 +241,46 @@ export default function Index() {
             </Tr>
           </Thead>
           <Tbody>
-            {isLoading 
+            {isLoading
               ? Array(ITEMS_PER_PAGE).fill(0).map((_, index) => <SkeletonRow key={index} />)
               : currentItems.map((item) => (
-                  <Tr key={item.id}>
-                    <Td>{item.customer_email}</Td>
-                    <Td>
-                      <Text 
-                        cursor="pointer" 
-                      >
-                        {truncateMessage(item.content)}
-                      </Text>
-                    </Td>
-                    <Td>
-                      <Tag colorScheme={getFeedbackTypeColor(feedbackTypeMap[item.feedback_type.toLowerCase()] as FeedbackType)}>
-                        {feedbackTypeMap[item.feedback_type.toLowerCase()]}
-                      </Tag>
-                    </Td>
-                    <Td>{item.created_at}</Td>
-                    <Td>{ item.feedback_page_title}</Td>
-                    <Td>
-                      <Flex>
-                        <IconButton
-                          aria-label="Önizle"
-                          icon={<ViewIcon />}
-                          onClick={() => handleMessageClick(item)}
-                          colorScheme="blue"
-                          size="sm"
-                          mr={2}
-                        />
-                        <IconButton
-                          aria-label="Sil"
-                          icon={<DeleteIcon />}
-                          onClick={() => handleDelete(item.id)}
-                          colorScheme="red"
-                          size="sm"
-                        />
-                      </Flex>
-                    </Td>
-                  </Tr>
-                ))
+                <Tr key={item.id}>
+                  <Td>{item.customer_email}</Td>
+                  <Td>
+                    <Text
+                      cursor="pointer"
+                    >
+                      {truncateMessage(item.content)}
+                    </Text>
+                  </Td>
+                  <Td>
+                    <Tag colorScheme={getFeedbackTypeColor(feedbackTypeMap[item.feedback_type.toLowerCase()] as FeedbackType)}>
+                      {feedbackTypeMap[item.feedback_type.toLowerCase()]}
+                    </Tag>
+                  </Td>
+                  <Td>{item.created_at}</Td>
+                  <Td>{item.feedback_page_title}</Td>
+                  <Td>
+                    <Flex>
+                      <IconButton
+                        aria-label="Önizle"
+                        icon={<ViewIcon />}
+                        onClick={() => handleMessageClick(item)}
+                        colorScheme="blue"
+                        size="sm"
+                        mr={2}
+                      />
+                      <IconButton
+                        aria-label="Sil"
+                        icon={<DeleteIcon />}
+                        onClick={() => handleDelete(item.id)}
+                        colorScheme="red"
+                        size="sm"
+                      />
+                    </Flex>
+                  </Td>
+                </Tr>
+              ))
             }
           </Tbody>
         </Table>
@@ -300,7 +300,7 @@ export default function Index() {
           Sonraki
         </Button>
       </Flex>
-      
+
       <AlertDialog
         isOpen={isDeleteAllOpen}
         leastDestructiveRef={cancelRef}
