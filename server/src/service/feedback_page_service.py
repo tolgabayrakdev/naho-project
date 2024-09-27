@@ -88,13 +88,16 @@ class FeedbackPageService:
             raise HTTPException(status_code=404, detail="Feedback not found")
 
     @staticmethod
-    def get_all(db: Session):
-        return (
+    def get_all(db: Session, user_id: int):
+        feedback_pages = (
             db.query(FeedbackPage)
             .filter(FeedbackPage.expires_at >= datetime.now())
+            .filter(FeedbackPage.user_id == user_id)
             .all()
         )
-    
+        if not feedback_pages:
+            raise HTTPException(status_code=404, detail="No feedback pages found for this user")
+        return feedback_pages
 
     @staticmethod
     def show(db: Session, url_token: str):
@@ -119,8 +122,3 @@ class FeedbackPageService:
                 raise HTTPException(status_code=404, detail="User not found")
         else:
             raise HTTPException(status_code=404, detail="Feedback not found")
-
-    @staticmethod
-    def get_user_feedback_pages(db: Session, user_id: int):
-        feedback_pages = db.query(FeedbackPage).filter(FeedbackPage.user_id == user_id).all()
-        return [{"id": page.id, "title": page.title, "url_token": page.url_token} for page in feedback_pages]

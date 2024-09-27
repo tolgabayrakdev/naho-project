@@ -58,7 +58,9 @@ export default function Pages() {
   useEffect(() => {
     const fetchFeedbackPages = async () => {
       try {
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page');
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page',{
+          credentials: 'include',
+        });
         const data = await response.json();
         console.log(data);
 
@@ -221,56 +223,63 @@ export default function Pages() {
         </Button>
       </Flex>
 
-      <Table size="sm" variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Başlık</Th>
-            <Th>Açıklama</Th>
-            <Th>Form URL</Th>
-            <Th>Bitiş Tarihi</Th>
-            <Th>İşlemler</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {feedbackPages.map((page) => (
-            <Tr key={page.id}>
-              <Td>{page.title}</Td>
-              <Td>{page.description}</Td>
-              <Td>
-                <Tooltip label={getFormUrl(page.url_token)}>
-                  <Link href={getFormUrl(page.url_token)} isExternal color="blue.500" textDecoration="underline">
-                    {getFormUrl(page.url_token).slice(0, 30)}...
-                  </Link>
-                </Tooltip>
-              </Td>
-              <Td>{format(new Date(page.expires_at), 'yyyy-MM-dd HH:mm')}</Td>
-              <Td>
-                <IconButton
-                  aria-label="Copy form URL"
-                  icon={<CopyIcon />}
-                  size="sm"
-                  mr={2}
-                  onClick={() => handleCopyToken(page.url_token)}
-                />
-                <IconButton
-                  aria-label="Show QR code"
-                  icon={<ViewIcon />}
-                  size="sm"
-                  mr={2}
-                  onClick={() => handleShowQr(page.url_token)}
-                />
-                <IconButton
-                  aria-label="Delete page"
-                  icon={<DeleteIcon />}
-                  size="sm"
-                  colorScheme="red"
-                  onClick={() => confirmDeletePage(page.id)}
-                />
-              </Td>
+      {feedbackPages.length > 0 ? (
+        <Table size="sm" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Başlık</Th>
+              <Th>Açıklama</Th>
+              <Th>Form URL</Th>
+              <Th>Bitiş Tarihi</Th>
+              <Th>İşlemler</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {feedbackPages.map((page) => (
+              <Tr key={page.id}>
+                <Td>{page.title}</Td>
+                <Td>{page.description}</Td>
+                <Td>
+                  <Tooltip label={getFormUrl(page.url_token)}>
+                    <Link href={getFormUrl(page.url_token)} isExternal color="blue.500" textDecoration="underline">
+                      {getFormUrl(page.url_token).slice(0, 30)}...
+                    </Link>
+                  </Tooltip>
+                </Td>
+                <Td>{format(new Date(page.expires_at), 'yyyy-MM-dd HH:mm')}</Td>
+                <Td>
+                  <IconButton
+                    aria-label="Copy form URL"
+                    icon={<CopyIcon />}
+                    size="sm"
+                    mr={2}
+                    onClick={() => handleCopyToken(page.url_token)}
+                  />
+                  <IconButton
+                    aria-label="Show QR code"
+                    icon={<ViewIcon />}
+                    size="sm"
+                    mr={2}
+                    onClick={() => handleShowQr(page.url_token)}
+                  />
+                  <IconButton
+                    aria-label="Delete page"
+                    icon={<DeleteIcon />}
+                    size="sm"
+                    colorScheme="red"
+                    onClick={() => confirmDeletePage(page.id)}
+                  />
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <Box textAlign="center" py={10}>
+          <Text fontSize="lg">Henüz geri bildirim sayfası oluşturmadınız.</Text>
+          <Text fontSize="md" mt={2}>Yeni bir sayfa oluşturmak için yukarıdaki "Yeni Sayfa Oluştur" butonunu kullanabilirsiniz.</Text>
+        </Box>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
