@@ -3,6 +3,7 @@ import { Heading, SimpleGrid, Box, Stat, StatLabel, StatNumber, Icon, Flex, Divi
 import { FaComments, FaSmile, FaLightbulb, FaExclamationCircle, FaQuestionCircle } from 'react-icons/fa';
 import Charts from "../../components/dashboard/charts";
 import Loading from "../../components/loading";
+import { Helmet } from "react-helmet-async";
 
 interface FeedbackStats {
   complaint: number;
@@ -66,9 +67,12 @@ export default function Index() {
 
   return (
     <div>
+      <Helmet>
+        <title>Naho App | Dashboard</title>
+      </Helmet>
       <Box width="fit-content">
         <Heading size="lg" mb={2}>Dashboard</Heading>
-        <Divider  borderWidth="1px" mb={4} />
+        <Divider borderWidth="1px" mb={4} />
       </Box>
       <SimpleGrid p="2" columns={{ base: 2, md: 3, lg: 5 }} spacing={4} mb={6}>
         <StatCard

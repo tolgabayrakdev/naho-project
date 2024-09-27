@@ -42,6 +42,7 @@ import {
 } from '@chakra-ui/react';
 import { QRCodeSVG } from 'qrcode.react';
 import { FiUser, FiClock, FiLink } from 'react-icons/fi';
+import { Helmet } from 'react-helmet-async';
 
 type FeedbackPage = {
   id: number;
@@ -300,218 +301,225 @@ export default function PreviewPage() {
     : '';
 
   return (
-    <Container maxW="container.xl" p={3}>
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
-        <Box>
-          <Box width="fit-content">
-            <Heading size="lg" mb={2}>Ön izleme Sayfası Oluştur</Heading>
-            <Divider borderWidth="1px" mb={4} />
-          </Box>
-          <VStack spacing={3} align="stretch">
-            <FormControl size="sm">
-              <FormLabel fontSize="sm">Başlık</FormLabel>
-              <Input name="title" value={page.title} onChange={handleInputChange} size="sm" />
-            </FormControl>
-            <FormControl size="sm">
-              <FormLabel fontSize="sm">Açıklama</FormLabel>
-              <Textarea name="description" value={page.description} onChange={handleInputChange} size="sm" />
-            </FormControl>
-            <FormControl size="sm">
-              <FormLabel fontSize="sm">Arka Plan Gradient</FormLabel>
-              <Select name="gradient" value={page.gradient} onChange={handleInputChange} size="sm">
-                {gradientOptions.map(gradient => (
-                  <option key={gradient.value} value={gradient.value}>{gradient.label}</option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl size="sm">
-              <FormLabel fontSize="sm">Font Stili</FormLabel>
-              <Select name="font" value={page.font} onChange={handleInputChange} size="sm">
-                {fontOptions.map(font => (
-                  <option key={font.value} value={font.value}>{font.label}</option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl size="sm">
-              <FormLabel fontSize="sm">Feedback Sayfası</FormLabel>
-              <Select
-                name="feedback_page_id"
-                value={page.feedback_page_id || ''}
-                onChange={handleInputChange}
-                size="sm"
-              >
-                <option value="">Feedback sayfası seçin</option>
-                {feedbackPages.map(fp => (
-                  <option key={fp.id} value={fp.id}>{fp.title}</option>
-                ))}
-              </Select>
-            </FormControl>
-          </VStack>
-        </Box>
+    <>
+    <Helmet>
+    <title>Naho App | Ön İzleme Sayfaları</title>
 
-        <Box>
-          <Heading as="h2" size="md" mb={3}>Ön izleme</Heading>
-          <Box
-            minH="60vh"
-            bg={bgColor}
-            p={6}
-            borderRadius="lg"
-            boxShadow="xl"
-            overflow="hidden"
-          >
-            <VStack spacing={6} align="stretch">
-              <Box bgGradient={page.gradient} p={5} borderRadius="lg">
-                {page.logo_url && (
-                  <Box width="70px" height="70px" borderRadius="full" overflow="hidden" bg="white" mb={3} mx="auto">
-                    <Image
-                      src={page.logo_url}
-                      alt="Company Logo"
-                      objectFit="cover"
-                      width="100%"
-                      height="100%"
-                    />
-                  </Box>
-                )}
-                <Heading as="h1" size="lg" color="white" mb={2} fontFamily={page.font} textAlign="center">
-                  {page.title || 'Sayfa Başlığı'}
-                </Heading>
-                <Text fontSize="sm" color="white" fontFamily={page.font} textAlign="center">
-                  {page.description || 'Sayfa Açıklaması'}
-                </Text>
-              </Box>
-
-              <VStack spacing={3} align="stretch" bg={bgColor} p={4} borderRadius="lg">
-                <Flex align="center" fontFamily={page.font} color={textColor}>
-                  <Icon as={FiUser} mr={2} />
-                  <Text fontSize="sm">Oluşturan: [Kullanıcı Adı]</Text>
-                </Flex>
-                <Flex align="center" fontFamily={page.font} color={textColor}>
-                  <Icon as={FiClock} mr={2} />
-                  <Text fontSize="sm">Son kullanma tarihi: [Tarih]</Text>
-                </Flex>
-
-                <VStack spacing={3} align="center" mt={4}>
-                  <Heading as="h2" size="sm" fontFamily={page.font} color={textColor}>
-                    Geri bildirim formuna erişmek için QR Kodu tarayın:
-                  </Heading>
-                  <Box bg="white" p={3} borderRadius="md" boxShadow="md">
-                    <QRCodeSVG value={formUrl} size={120} />
-                  </Box>
-                </VStack>
-
-                <VStack spacing={1} align="center" mt={3}>
-                  <Text fontSize="xs" fontFamily={page.font} color={textColor}>veya bu bağlantıyı ziyaret edin:</Text>
-                  <Link
-                    href={formUrl}
-                    color="blue.500"
-                    _hover={{ color: 'blue.600' }}
-                    display="inline-flex"
-                    alignItems="center"
-                    fontFamily={page.font}
-                    fontSize="xs"
-                  >
-                    <Icon as={FiLink} mr={1} />
-                    {formUrl}
-                  </Link>
-                </VStack>
-              </VStack>
+    </Helmet>
+      <Container maxW="container.xl" p={3}>
+        <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+          <Box>
+            <Box width="fit-content">
+              <Heading size="lg" mb={2}>Ön izleme Sayfası Oluştur</Heading>
+              <Divider borderWidth="1px" mb={4} />
+            </Box>
+            <VStack spacing={3} align="stretch">
+              <FormControl size="sm">
+                <FormLabel fontSize="sm">Başlık</FormLabel>
+                <Input name="title" value={page.title} onChange={handleInputChange} size="sm" />
+              </FormControl>
+              <FormControl size="sm">
+                <FormLabel fontSize="sm">Açıklama</FormLabel>
+                <Textarea name="description" value={page.description} onChange={handleInputChange} size="sm" />
+              </FormControl>
+              <FormControl size="sm">
+                <FormLabel fontSize="sm">Arka Plan Gradient</FormLabel>
+                <Select name="gradient" value={page.gradient} onChange={handleInputChange} size="sm">
+                  {gradientOptions.map(gradient => (
+                    <option key={gradient.value} value={gradient.value}>{gradient.label}</option>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl size="sm">
+                <FormLabel fontSize="sm">Font Stili</FormLabel>
+                <Select name="font" value={page.font} onChange={handleInputChange} size="sm">
+                  {fontOptions.map(font => (
+                    <option key={font.value} value={font.value}>{font.label}</option>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl size="sm">
+                <FormLabel fontSize="sm">Feedback Sayfası</FormLabel>
+                <Select
+                  name="feedback_page_id"
+                  value={page.feedback_page_id || ''}
+                  onChange={handleInputChange}
+                  size="sm"
+                >
+                  <option value="">Feedback sayfası seçin</option>
+                  {feedbackPages.map(fp => (
+                    <option key={fp.id} value={fp.id}>{fp.title}</option>
+                  ))}
+                </Select>
+              </FormControl>
             </VStack>
           </Box>
-        </Box>
-      </SimpleGrid>
 
-      <Button colorScheme="green" onClick={handlePublish} size="sm">
-        Yayınla
-      </Button>
+          <Box>
+            <Heading as="h2" size="md" mb={3}>Ön izleme</Heading>
+            <Box
+              minH="60vh"
+              bg={bgColor}
+              p={6}
+              borderRadius="lg"
+              boxShadow="xl"
+              overflow="hidden"
+            >
+              <VStack spacing={6} align="stretch">
+                <Box bgGradient={page.gradient} p={5} borderRadius="lg">
+                  {page.logo_url && (
+                    <Box width="70px" height="70px" borderRadius="full" overflow="hidden" bg="white" mb={3} mx="auto">
+                      <Image
+                        src={page.logo_url}
+                        alt="Company Logo"
+                        objectFit="cover"
+                        width="100%"
+                        height="100%"
+                      />
+                    </Box>
+                  )}
+                  <Heading as="h1" size="lg" color="white" mb={2} fontFamily={page.font} textAlign="center">
+                    {page.title || 'Sayfa Başlığı'}
+                  </Heading>
+                  <Text fontSize="sm" color="white" fontFamily={page.font} textAlign="center">
+                    {page.description || 'Sayfa Açıklaması'}
+                  </Text>
+                </Box>
 
-      <Heading as="h2" size="lg" mt={8} mb={4}>Oluşturulan Önizleme Sayfaları</Heading>
-      {previewPages.length > 0 ? (
-        <Table size="sm" variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Başlık</Th>
-              <Th>Açıklama</Th>
-              <Th>Oluşturulma Tarihi</Th>
-              <Th>İşlemler</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {previewPages.map(previewPage => (
-              <Tr key={previewPage.id}>
-                <Td>{previewPage.title}</Td>
-                <Td>{previewPage.description}</Td>
-                <Td>{new Date(previewPage.created_at).toLocaleString()}</Td>
-                <Td>
-                  <Button colorScheme="blue" size="sm" mr={2} onClick={() => handlePreview(previewPage.url_token)}>
-                    Önizle
-                  </Button>
-                  <Button colorScheme="red" size="sm" onClick={() => handleDeleteClick(previewPage.id)}>
-                    Sil
-                  </Button>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      ) : (
-        <Text>Henüz oluşturulmuş önizleme sayfası bulunmamaktadır.</Text>
-      )}
+                <VStack spacing={3} align="stretch" bg={bgColor} p={4} borderRadius="lg">
+                  <Flex align="center" fontFamily={page.font} color={textColor}>
+                    <Icon as={FiUser} mr={2} />
+                    <Text fontSize="sm">Oluşturan: [Kullanıcı Adı]</Text>
+                  </Flex>
+                  <Flex align="center" fontFamily={page.font} color={textColor}>
+                    <Icon as={FiClock} mr={2} />
+                    <Text fontSize="sm">Son kullanma tarihi: [Tarih]</Text>
+                  </Flex>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Sayfa Yayınlandı</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text>Sayfanız başarıyla yayınlandı. Aşağıdaki link ile erişebilirsiniz:</Text>
-            <Input value={publishedUrl || ''} isReadOnly mt={2} />
-            <Box mt={4}>
-              <QRCodeSVG value={publishedUrl || ''} size={200} />
+                  <VStack spacing={3} align="center" mt={4}>
+                    <Heading as="h2" size="sm" fontFamily={page.font} color={textColor}>
+                      Geri bildirim formuna erişmek için QR Kodu tarayın:
+                    </Heading>
+                    <Box bg="white" p={3} borderRadius="md" boxShadow="md">
+                      <QRCodeSVG value={formUrl} size={120} />
+                    </Box>
+                  </VStack>
+
+                  <VStack spacing={1} align="center" mt={3}>
+                    <Text fontSize="xs" fontFamily={page.font} color={textColor}>veya bu bağlantıyı ziyaret edin:</Text>
+                    <Link
+                      href={formUrl}
+                      color="blue.500"
+                      _hover={{ color: 'blue.600' }}
+                      display="inline-flex"
+                      alignItems="center"
+                      fontFamily={page.font}
+                      fontSize="xs"
+                    >
+                      <Icon as={FiLink} mr={1} />
+                      {formUrl}
+                    </Link>
+                  </VStack>
+                </VStack>
+              </VStack>
             </Box>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={() => {
-              navigator.clipboard.writeText(publishedUrl || '');
-              toast({
-                title: "Link kopyalandı.",
-                status: "success",
-                duration: 2000,
-                isClosable: true,
-              });
-            }}>
-              Linki Kopyala
-            </Button>
-            <Button variant="ghost" onClick={onClose}>Kapat</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </Box>
+        </SimpleGrid>
 
-      <AlertDialog
-        isOpen={isDeleteAlertOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={() => setIsDeleteAlertOpen(false)}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Preview Sayfasını Sil
-            </AlertDialogHeader>
+        <Button colorScheme="green" onClick={handlePublish} size="sm">
+          Yayınla
+        </Button>
 
-            <AlertDialogBody>
-              Bu preview sayfasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
-            </AlertDialogBody>
+        <Heading as="h2" size="lg" mt={8} mb={4}>Oluşturulan Önizleme Sayfaları</Heading>
+        {previewPages.length > 0 ? (
+          <Table size="sm" variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Başlık</Th>
+                <Th>Açıklama</Th>
+                <Th>Oluşturulma Tarihi</Th>
+                <Th>İşlemler</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {previewPages.map(previewPage => (
+                <Tr key={previewPage.id}>
+                  <Td>{previewPage.title}</Td>
+                  <Td>{previewPage.description}</Td>
+                  <Td>{new Date(previewPage.created_at).toLocaleString()}</Td>
+                  <Td>
+                    <Button colorScheme="blue" size="sm" mr={2} onClick={() => handlePreview(previewPage.url_token)}>
+                      Önizle
+                    </Button>
+                    <Button colorScheme="red" size="sm" onClick={() => handleDeleteClick(previewPage.id)}>
+                      Sil
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        ) : (
+          <Text>Henüz oluşturulmuş önizleme sayfası bulunmamaktadır.</Text>
+        )}
 
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={() => setIsDeleteAlertOpen(false)}>
-                İptal
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Sayfa Yayınlandı</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text>Sayfanız başarıyla yayınlandı. Aşağıdaki link ile erişebilirsiniz:</Text>
+              <Input value={publishedUrl || ''} isReadOnly mt={2} />
+              <Box mt={4}>
+                <QRCodeSVG value={publishedUrl || ''} size={200} />
+              </Box>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={() => {
+                navigator.clipboard.writeText(publishedUrl || '');
+                toast({
+                  title: "Link kopyalandı.",
+                  status: "success",
+                  duration: 2000,
+                  isClosable: true,
+                });
+              }}>
+                Linki Kopyala
               </Button>
-              <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>
-                Sil
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    </Container>
+              <Button variant="ghost" onClick={onClose}>Kapat</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
+        <AlertDialog
+          isOpen={isDeleteAlertOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={() => setIsDeleteAlertOpen(false)}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Preview Sayfasını Sil
+              </AlertDialogHeader>
+
+              <AlertDialogBody>
+                Bu preview sayfasını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={() => setIsDeleteAlertOpen(false)}>
+                  İptal
+                </Button>
+                <Button colorScheme="red" onClick={handleDeleteConfirm} ml={3}>
+                  Sil
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      </Container>
+    </>
+
   );
 }

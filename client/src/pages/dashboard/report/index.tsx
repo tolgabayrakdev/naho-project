@@ -19,6 +19,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { DownloadIcon, RepeatIcon, SearchIcon } from '@chakra-ui/icons';
+import { Helmet } from 'react-helmet-async';
 
 type Feedback = {
   id: string;
@@ -33,10 +34,10 @@ type AnalysisResult = {
 function areSimilarSentences(str1: string, str2: string): boolean {
   const words1 = str1.toLowerCase().split(/\s+/).filter(word => word.length > 3);
   const words2 = str2.toLowerCase().split(/\s+/).filter(word => word.length > 3);
-  
+
   const commonWords = words1.filter(word => words2.includes(word));
   const similarityRatio = commonWords.length / Math.max(words1.length, words2.length);
-  
+
   return similarityRatio > 0.5; // Benzerlik eşiği
 }
 
@@ -176,119 +177,125 @@ export default function Index() {
   const boxTextColor = useColorModeValue('blue.700', 'blue.200');
 
   return (
-    <Container maxW="container.xl" py={10}>
-      <VStack spacing={8} align="stretch">
-        <Heading as="h2" size="xl" textAlign="center" color={headingColor}>
-          Geri Bildirim Raporu
-        </Heading>
+    <>
+      <Helmet>
+        <title>Naho App | Rapor Oluştur</title>
+      </Helmet>
+      <Container maxW="container.xl" py={10}>
+        <VStack spacing={8} align="stretch">
+          <Heading as="h2" size="xl" textAlign="center" color={headingColor}>
+            Geri Bildirim Raporu
+          </Heading>
 
-        <Flex justifyContent="center" wrap="wrap" gap={4}>
-          <Tooltip label="Geri Bildirimleri Getir">
-            <Button
-              leftIcon={<RepeatIcon />}
-              onClick={fetchFeedbacks}
-              isLoading={loading}
-              colorScheme="blue"
-              variant="outline"
-            >
-              Geri Bildirimleri Getir
-            </Button>
-          </Tooltip>
-          <Tooltip label="Analiz Et">
-            <Button
-              leftIcon={<SearchIcon />}
-              onClick={analyzeFeedbacks}
-              isLoading={analyzing}
-              isDisabled={feedbacks.length === 0}
-              colorScheme="green"
-              variant="outline"
-            >
-              Analiz Et
-            </Button>
-          </Tooltip>
-          <Tooltip label="CSV İndir">
-            <IconButton
-              icon={<DownloadIcon />}
-              onClick={downloadCSV}
-              isDisabled={!analysisResult}
-              colorScheme="teal"
-              aria-label="CSV İndir"
-            />
-          </Tooltip>
-        </Flex>
-
-        {feedbacks.length > 0 && (
-          <Badge colorScheme="blue" p={2} borderRadius="full" alignSelf="center">
-            Toplam Geri Bildirim Sayısı: {feedbacks.length}
-          </Badge>
-        )}
-
-        {analyzing && (
-          <Box>
-            <Progress size="xs" isIndeterminate colorScheme="blue" />
-            <Text mt={2} fontSize="sm" textAlign="center" color="gray.600">
-              Analiz ediliyor, lütfen bekleyin...
-            </Text>
-          </Box>
-        )}
-
-        {analysisResult && (
-          <Box bg={bgColor} shadow="md" borderRadius="lg" p={6}>
-            <Heading as="h4" size="md" mb={6} textAlign="center" color={headingColor}>
-              Analiz Sonuçları
-            </Heading>
-            <Flex mb={6} gap={4} flexDirection={{ base: 'column', md: 'row' }}>
-              <Input
-                placeholder="Kelime ara..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                flex={1}
+          <Flex justifyContent="center" wrap="wrap" gap={4}>
+            <Tooltip label="Geri Bildirimleri Getir">
+              <Button
+                leftIcon={<RepeatIcon />}
+                onClick={fetchFeedbacks}
+                isLoading={loading}
+                colorScheme="blue"
+                variant="outline"
+              >
+                Geri Bildirimleri Getir
+              </Button>
+            </Tooltip>
+            <Tooltip label="Analiz Et">
+              <Button
+                leftIcon={<SearchIcon />}
+                onClick={analyzeFeedbacks}
+                isLoading={analyzing}
+                isDisabled={feedbacks.length === 0}
+                colorScheme="green"
+                variant="outline"
+              >
+                Analiz Et
+              </Button>
+            </Tooltip>
+            <Tooltip label="CSV İndir">
+              <IconButton
+                icon={<DownloadIcon />}
+                onClick={downloadCSV}
+                isDisabled={!analysisResult}
+                colorScheme="teal"
+                aria-label="CSV İndir"
               />
-              <Select
-                value={itemsPerPage}
-                onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                width={{ base: 'full', md: '150px' }}
-              >
-                <option value="10">10 Sonuç</option>
-                <option value="20">20 Sonuç</option>
-                <option value="50">50 Sonuç</option>
-              </Select>
-            </Flex>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
-              {paginatedResults.map(([sentence, count]) => (
-                <Box key={sentence} p={4} bg={boxBgColor} borderRadius="md" boxShadow="sm">
-                  <Text fontWeight="medium" mb={2} color={boxTextColor}>{sentence}</Text>
-                  <Badge colorScheme="green">{count} kez</Badge>
-                </Box>
-              ))}
-            </SimpleGrid>
-            <Divider my={6} />
-            <Flex justifyContent="center" alignItems="center" gap={4}>
-              <Button
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                isDisabled={currentPage === 1}
-                colorScheme="blue"
-                variant="outline"
-              >
-                Önceki
-              </Button>
-              <Text fontSize="sm" fontWeight="bold" color={textColor}>
-                Sayfa {currentPage} / {pageCount}
+            </Tooltip>
+          </Flex>
+
+          {feedbacks.length > 0 && (
+            <Badge colorScheme="blue" p={2} borderRadius="full" alignSelf="center">
+              Toplam Geri Bildirim Sayısı: {feedbacks.length}
+            </Badge>
+          )}
+
+          {analyzing && (
+            <Box>
+              <Progress size="xs" isIndeterminate colorScheme="blue" />
+              <Text mt={2} fontSize="sm" textAlign="center" color="gray.600">
+                Analiz ediliyor, lütfen bekleyin...
               </Text>
-              <Button
-                size="sm"
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount))}
-                isDisabled={currentPage === pageCount}
-                colorScheme="blue"
-                variant="outline"
-              >
-                Sonraki
-              </Button>
-            </Flex>
-          </Box>
-        )}
-      </VStack>
-    </Container>
+            </Box>
+          )}
+
+          {analysisResult && (
+            <Box bg={bgColor} shadow="md" borderRadius="lg" p={6}>
+              <Heading as="h4" size="md" mb={6} textAlign="center" color={headingColor}>
+                Analiz Sonuçları
+              </Heading>
+              <Flex mb={6} gap={4} flexDirection={{ base: 'column', md: 'row' }}>
+                <Input
+                  placeholder="Kelime ara..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  flex={1}
+                />
+                <Select
+                  value={itemsPerPage}
+                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                  width={{ base: 'full', md: '150px' }}
+                >
+                  <option value="10">10 Sonuç</option>
+                  <option value="20">20 Sonuç</option>
+                  <option value="50">50 Sonuç</option>
+                </Select>
+              </Flex>
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+                {paginatedResults.map(([sentence, count]) => (
+                  <Box key={sentence} p={4} bg={boxBgColor} borderRadius="md" boxShadow="sm">
+                    <Text fontWeight="medium" mb={2} color={boxTextColor}>{sentence}</Text>
+                    <Badge colorScheme="green">{count} kez</Badge>
+                  </Box>
+                ))}
+              </SimpleGrid>
+              <Divider my={6} />
+              <Flex justifyContent="center" alignItems="center" gap={4}>
+                <Button
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  isDisabled={currentPage === 1}
+                  colorScheme="blue"
+                  variant="outline"
+                >
+                  Önceki
+                </Button>
+                <Text fontSize="sm" fontWeight="bold" color={textColor}>
+                  Sayfa {currentPage} / {pageCount}
+                </Text>
+                <Button
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount))}
+                  isDisabled={currentPage === pageCount}
+                  colorScheme="blue"
+                  variant="outline"
+                >
+                  Sonraki
+                </Button>
+              </Flex>
+            </Box>
+          )}
+        </VStack>
+      </Container>
+    </>
+
   );
 }

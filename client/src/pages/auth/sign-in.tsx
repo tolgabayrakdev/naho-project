@@ -3,6 +3,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 const SignInSchema = Yup.object().shape({
     email: Yup.string().email('Geçersiz email').required('Email gerekli'),
@@ -73,6 +74,9 @@ const SignIn = () => {
     }
     return (
         <>
+        <Helmet>
+            <title>Naho App |  Giriş Yap</title>
+        </Helmet>
             <Box maxWidth="400px" margin="auto" mt={8}>
                 <VStack spacing={8} align="stretch">
                     <Heading textAlign="center">Giriş Yap</Heading>

@@ -28,6 +28,7 @@ import {
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { FaWhatsapp, FaInstagram, FaTwitter, FaFacebook } from 'react-icons/fa';
+import { Helmet } from 'react-helmet-async';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -239,6 +240,9 @@ const Profile = () => {
 
     return (
         <>
+            <Helmet>
+                <title>Naho App | Profil</title>
+            </Helmet>
             <Box>
                 <Box width="fit-content">
                     <Heading size="lg" mb={2}>Profil</Heading>

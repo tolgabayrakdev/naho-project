@@ -33,6 +33,7 @@ import {
 import { AddIcon, DeleteIcon, CopyIcon, ViewIcon } from '@chakra-ui/icons';
 import { QRCodeSVG } from 'qrcode.react'; // QRCode importu
 import { format } from 'date-fns'; // date-fns importu
+import { Helmet } from 'react-helmet-async';
 
 type FeedbackPage = {
   id: string;
@@ -70,7 +71,7 @@ export default function Pages() {
           setFeedbackPages(data.pages);
         } else {
           console.log("no content");
-          
+
         }
       } catch (error) {
         console.error('Error fetching feedback pages:', error);
@@ -220,134 +221,140 @@ export default function Pages() {
   };
 
   return (
-    <Box p={5}>
-      <Flex justifyContent="space-between" alignItems="center" mb={5}>
-        <Box width="fit-content">
-          <Heading mb={2}  size="lg">Geri Bildirim Sayfaları</Heading>
-          <Divider borderWidth="1px" mb={4} />
-        </Box>
-        <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={onOpen}>
-          Yeni Sayfa Oluştur
-        </Button>
-      </Flex>
+    <>
+    <Helmet>
+    <title>Naho App | Bildirim Sayfaları</title>
+    </Helmet>
+      <Box p={5}>
+        <Flex justifyContent="space-between" alignItems="center" mb={5}>
+          <Box width="fit-content">
+            <Heading mb={2} size="lg">Geri Bildirim Sayfaları</Heading>
+            <Divider borderWidth="1px" mb={4} />
+          </Box>
+          <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={onOpen}>
+            Yeni Sayfa Oluştur
+          </Button>
+        </Flex>
 
-      {Array.isArray(feedbackPages) && feedbackPages.length > 0 ? (
-        <Table size="sm" variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Başlık</Th>
-              <Th>Açıklama</Th>
-              <Th>Form URL</Th>
-              <Th>Bitiş Tarihi</Th>
-              <Th>İşlemler</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {feedbackPages.map((page) => (
-              <Tr key={page.id}>
-                <Td>{page.title}</Td>
-                <Td>{page.description}</Td>
-                <Td>
-                  <Tooltip label={getFormUrl(page.url_token)}>
-                    <Link href={getFormUrl(page.url_token)} isExternal color="blue.500" textDecoration="underline">
-                      {getFormUrl(page.url_token).slice(0, 30)}...
-                    </Link>
-                  </Tooltip>
-                </Td>
-                <Td>{format(new Date(page.expires_at), 'yyyy-MM-dd HH:mm')}</Td>
-                <Td>
-                  <IconButton
-                    aria-label="Copy form URL"
-                    icon={<CopyIcon />}
-                    size="sm"
-                    mr={2}
-                    onClick={() => handleCopyToken(page.url_token)}
-                  />
-                  <IconButton
-                    aria-label="Show QR code"
-                    icon={<ViewIcon />}
-                    size="sm"
-                    mr={2}
-                    onClick={() => handleShowQr(page.url_token)}
-                  />
-                  <IconButton
-                    aria-label="Delete page"
-                    icon={<DeleteIcon />}
-                    size="sm"
-                    colorScheme="red"
-                    onClick={() => confirmDeletePage(page.id)}
-                  />
-                </Td>
+        {Array.isArray(feedbackPages) && feedbackPages.length > 0 ? (
+          <Table size="sm" variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Başlık</Th>
+                <Th>Açıklama</Th>
+                <Th>Form URL</Th>
+                <Th>Bitiş Tarihi</Th>
+                <Th>İşlemler</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      ) : (
-        <Box textAlign="center" py={10}>
-          <Text fontSize="lg">Henüz geri bildirim sayfası oluşturmadınız.</Text>
-          <Text fontSize="md" mt={2}>Yeni bir sayfa oluşturmak için yukarıdaki "Yeni Sayfa Oluştur" butonunu kullanabilirsiniz.</Text>
-        </Box>
-      )}
+            </Thead>
+            <Tbody>
+              {feedbackPages.map((page) => (
+                <Tr key={page.id}>
+                  <Td>{page.title}</Td>
+                  <Td>{page.description}</Td>
+                  <Td>
+                    <Tooltip label={getFormUrl(page.url_token)}>
+                      <Link href={getFormUrl(page.url_token)} isExternal color="blue.500" textDecoration="underline">
+                        {getFormUrl(page.url_token).slice(0, 30)}...
+                      </Link>
+                    </Tooltip>
+                  </Td>
+                  <Td>{format(new Date(page.expires_at), 'yyyy-MM-dd HH:mm')}</Td>
+                  <Td>
+                    <IconButton
+                      aria-label="Copy form URL"
+                      icon={<CopyIcon />}
+                      size="sm"
+                      mr={2}
+                      onClick={() => handleCopyToken(page.url_token)}
+                    />
+                    <IconButton
+                      aria-label="Show QR code"
+                      icon={<ViewIcon />}
+                      size="sm"
+                      mr={2}
+                      onClick={() => handleShowQr(page.url_token)}
+                    />
+                    <IconButton
+                      aria-label="Delete page"
+                      icon={<DeleteIcon />}
+                      size="sm"
+                      colorScheme="red"
+                      onClick={() => confirmDeletePage(page.id)}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        ) : (
+          <Box textAlign="center" py={10}>
+            <Text fontSize="lg">Henüz geri bildirim sayfası oluşturmadınız.</Text>
+            <Text fontSize="md" mt={2}>Yeni bir sayfa oluşturmak için yukarıdaki "Yeni Sayfa Oluştur" butonunu kullanabilirsiniz.</Text>
+          </Box>
+        )}
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Yeni Geri Bildirim Sayfası Oluştur</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl isInvalid={!!titleError}>
-              <FormLabel>Başlık</FormLabel>
-              <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
-              <FormErrorMessage>{titleError}</FormErrorMessage>
-            </FormControl>
-            <FormControl mt={4} isInvalid={!!descriptionError}>
-              <FormLabel>Açıklama</FormLabel>
-              <Textarea
-                value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
-              />
-              <FormErrorMessage>{descriptionError}</FormErrorMessage>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleCreatePage}>
-              Oluştur
-            </Button>
-            <Button variant="ghost" onClick={onClose}>İptal</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Yeni Geri Bildirim Sayfası Oluştur</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl isInvalid={!!titleError}>
+                <FormLabel>Başlık</FormLabel>
+                <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+                <FormErrorMessage>{titleError}</FormErrorMessage>
+              </FormControl>
+              <FormControl mt={4} isInvalid={!!descriptionError}>
+                <FormLabel>Açıklama</FormLabel>
+                <Textarea
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                />
+                <FormErrorMessage>{descriptionError}</FormErrorMessage>
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" mr={3} onClick={handleCreatePage}>
+                Oluştur
+              </Button>
+              <Button variant="ghost" onClick={onClose}>İptal</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
 
-      <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Geri Bildirim Sayfasını Sil</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text>Bu sayfayı silmek istediğinizden emin misiniz? Bu sayfa ile ilgili ön izleme sayfalarıda beraberinde silinecektir.</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="red" mr={3} onClick={() => handleDeletePage(pageToDelete!)}>
-              Sil
-            </Button>
-            <Button variant="ghost" onClick={onDeleteClose}>İptal</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        <Modal isOpen={isDeleteOpen} onClose={onDeleteClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Geri Bildirim Sayfasını Sil</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text>Bu sayfayı silmek istediğinizden emin misiniz? Bu sayfa ile ilgili ön izleme sayfalarıda beraberinde silinecektir.</Text>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="red" mr={3} onClick={() => handleDeletePage(pageToDelete!)}>
+                Sil
+              </Button>
+              <Button variant="ghost" onClick={onDeleteClose}>İptal</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
 
-      <Modal isOpen={isQrOpen} onClose={onQrClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader display="flex" justifyContent="center">Form URL'si için QR Kodu</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody display="flex" justifyContent="center">
-            {qrUrl && <QRCodeSVG value={qrUrl} size={256} />}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="ghost" onClick={onQrClose}>Kapat</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Box>
+        <Modal isOpen={isQrOpen} onClose={onQrClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader display="flex" justifyContent="center">Form URL'si için QR Kodu</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody display="flex" justifyContent="center">
+              {qrUrl && <QRCodeSVG value={qrUrl} size={256} />}
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" onClick={onQrClose}>Kapat</Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </Box>
+    </>
+
   );
 }

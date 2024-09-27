@@ -3,6 +3,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 const SignUpSchema = Yup.object().shape({
     username: Yup.string().required('Kullanıcı adı gerekli'),
@@ -63,6 +64,9 @@ const SignUp = () => {
 
     return (
         <>
+            <Helmet>
+                <title>Naho App |  Kayıt Ol</title>
+            </Helmet>
             <Box maxWidth="400px" margin="auto" mt={8}>
                 <VStack spacing={8} align="stretch">
                     <Heading textAlign="center">Kayıt Ol</Heading>

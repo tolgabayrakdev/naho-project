@@ -92,7 +92,7 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                              Bildirim Sayfaları
                         </NavItem>
                         <NavItem icon={<BiCreditCardAlt />} to="/dashboard/feedback/preview-page" onClick={onNavigate}>
-                             Önizleme Sayfaları
+                             Ön İzleme Sayfaları
                         </NavItem>
                     </Box>
                 </Collapse>
