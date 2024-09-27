@@ -58,15 +58,23 @@ export default function Pages() {
   useEffect(() => {
     const fetchFeedbackPages = async () => {
       try {
-        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page',{
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page', {
           credentials: 'include',
         });
         const data = await response.json();
-        console.log(data);
+        console.log('API response:', data); // Log the entire response
 
-        setFeedbackPages(data);
+        if (Array.isArray(data)) {
+          setFeedbackPages(data);
+        } else if (data.pages && Array.isArray(data.pages)) {
+          setFeedbackPages(data.pages);
+        } else {
+          console.log("no content");
+          
+        }
       } catch (error) {
         console.error('Error fetching feedback pages:', error);
+        setFeedbackPages([]); // Set to empty array in case of error
         toast({
           title: "Geri bildirim sayfaları yüklenemedi.",
           status: "error",
@@ -98,7 +106,7 @@ export default function Pages() {
     return isValid;
   };
 
-  const handleCreatePage = () => {
+  const handleCreatePage = async () => {
     if (!validateInputs()) {
       return;
     }
@@ -120,35 +128,45 @@ export default function Pages() {
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     };
 
-    fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: "include",
-      body: JSON.stringify(newPage),
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(err => Promise.reject(err));
-        }
-        return response.json();
-      })
-      .then(data => {
-        setFeedbackPages([...feedbackPages, data]);
-        onClose();
-        // Reset the modal content
-        setNewTitle('');
-        setNewDescription('');
-        setTitleError('');
-        setDescriptionError('');
-        toast({
-          title: "Geri bildirim sayfası oluşturuldu.",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-      })
+    try {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: "include",
+        body: JSON.stringify(newPage),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Bir hata oluştu');
+      }
+
+      const data = await response.json();
+      setFeedbackPages([...feedbackPages, data]);
+      onClose();
+      // Reset the modal content
+      setNewTitle('');
+      setNewDescription('');
+      setTitleError('');
+      setDescriptionError('');
+      toast({
+        title: "Geri bildirim sayfası oluşturuldu.",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error creating feedback page:', error);
+      toast({
+        title: "Geri bildirim sayfası oluşturulamadı.",
+        description: error instanceof Error ? error.message : 'Bir hata oluştu',
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   const handleDeletePage = (id: string) => {
@@ -213,7 +231,7 @@ export default function Pages() {
         </Button>
       </Flex>
 
-      {feedbackPages.length > 0 ? (
+      {Array.isArray(feedbackPages) && feedbackPages.length > 0 ? (
         <Table size="sm" variant="simple">
           <Thead>
             <Tr>
