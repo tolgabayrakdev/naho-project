@@ -129,7 +129,7 @@ export default function PreviewPage() {
 
   const fetchFeedbackPages = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/feedback-page', {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page', {
         credentials: 'include'
       });
       if (!response.ok) {
@@ -150,7 +150,7 @@ export default function PreviewPage() {
 
   const fetchPreviewPages = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/preview-page', {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/preview-page', {
         credentials: 'include'
       });
       if (!response.ok) {
@@ -187,7 +187,7 @@ export default function PreviewPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/preview-page', {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/preview-page', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ export default function PreviewPage() {
         duration: 3000,
         isClosable: true,
       });
-      
+
       // Yeni sayfayı oluşturduktan sonra preview sayfalarını yeniden yükle
       await fetchPreviewPages();
     } catch (error) {
@@ -251,7 +251,7 @@ export default function PreviewPage() {
     if (deleteTargetId === null) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/preview-page/${deleteTargetId}`, {
+      const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/api/preview-page/${deleteTargetId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
@@ -264,7 +264,7 @@ export default function PreviewPage() {
         duration: 3000,
         isClosable: true,
       });
-      
+
       // Sayfayı sildikten sonra preview sayfalarını yeniden yükle
       await fetchPreviewPages();
     } catch (error) {
@@ -282,7 +282,7 @@ export default function PreviewPage() {
   };
 
   const selectedFeedbackPage = feedbackPages.find(fp => fp.id === Number(page.feedback_page_id));
-  const formUrl = selectedFeedbackPage 
+  const formUrl = selectedFeedbackPage
     ? `${window.location.origin}/feedback-form/${selectedFeedbackPage.url_token}`
     : '';
 
@@ -318,10 +318,10 @@ export default function PreviewPage() {
             </FormControl>
             <FormControl size="sm">
               <FormLabel fontSize="sm">Feedback Sayfası</FormLabel>
-              <Select 
-                name="feedback_page_id" 
-                value={page.feedback_page_id || ''} 
-                onChange={handleInputChange} 
+              <Select
+                name="feedback_page_id"
+                value={page.feedback_page_id || ''}
+                onChange={handleInputChange}
                 size="sm"
               >
                 <option value="">Feedback sayfası seçin</option>
@@ -347,9 +347,9 @@ export default function PreviewPage() {
               <Box bgGradient={page.gradient} p={5} borderRadius="lg">
                 {page.logo_url && (
                   <Box width="70px" height="70px" borderRadius="full" overflow="hidden" bg="white" mb={3} mx="auto">
-                    <Image 
-                      src={page.logo_url} 
-                      alt="Company Logo" 
+                    <Image
+                      src={page.logo_url}
+                      alt="Company Logo"
                       objectFit="cover"
                       width="100%"
                       height="100%"
@@ -363,7 +363,7 @@ export default function PreviewPage() {
                   {page.description || 'Sayfa Açıklaması'}
                 </Text>
               </Box>
-              
+
               <VStack spacing={3} align="stretch" bg={bgColor} p={4} borderRadius="lg">
                 <Flex align="center" fontFamily={page.font} color={textColor}>
                   <Icon as={FiUser} mr={2} />
@@ -373,7 +373,7 @@ export default function PreviewPage() {
                   <Icon as={FiClock} mr={2} />
                   <Text fontSize="sm">Son kullanma tarihi: [Tarih]</Text>
                 </Flex>
-                
+
                 <VStack spacing={3} align="center" mt={4}>
                   <Heading as="h2" size="sm" fontFamily={page.font} color={textColor}>
                     Geri bildirim formuna erişmek için QR Kodu tarayın:
@@ -382,7 +382,7 @@ export default function PreviewPage() {
                     <QRCodeSVG value={formUrl} size={120} />
                   </Box>
                 </VStack>
-                
+
                 <VStack spacing={1} align="center" mt={3}>
                   <Text fontSize="xs" fontFamily={page.font} color={textColor}>veya bu bağlantıyı ziyaret edin:</Text>
                   <Link

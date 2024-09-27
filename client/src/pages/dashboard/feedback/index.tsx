@@ -71,7 +71,7 @@ export default function Index() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch('http://localhost:8000/api/feedback/user-feedbacks', {
+    fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback/user-feedbacks', {
       method: "GET",
       credentials: "include"
     })
@@ -121,7 +121,7 @@ export default function Index() {
   };
 
   const handleDelete = (id: number) => {
-    fetch(`http://localhost:8000/api/feedback/${id}`, {
+    fetch(import.meta.env.VITE_BACKEND_URL + `/api/feedback/${id}`, {
       method: "DELETE",
       credentials: "include"
     })
@@ -150,7 +150,7 @@ export default function Index() {
   };
 
   const handleDeleteAll = () => {
-    fetch('http://localhost:8000/api/feedback/user-feedbacks', {
+    fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback/user-feedbacks', {
       method: "DELETE",
       credentials: "include"
     })

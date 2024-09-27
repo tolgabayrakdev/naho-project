@@ -45,7 +45,7 @@ export default function PreviewPage() {
   useEffect(() => {
     const fetchPreviewData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/preview-page/${token}`, {
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/api/preview-page/${token}`, {
           credentials: 'include'
         });
         if (!response.ok) {

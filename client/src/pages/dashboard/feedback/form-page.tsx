@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box,
@@ -31,7 +31,7 @@ export default function FormPage() {
   useEffect(() => {
     const fetchPageData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/feedback-page/${token}`);
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/api/feedback-page/${token}`);
         if (!response.ok) {
           throw new Error('Sayfa bulunamadı');
         }

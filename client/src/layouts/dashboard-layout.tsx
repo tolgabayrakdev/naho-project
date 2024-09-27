@@ -201,7 +201,7 @@ function DashboardLayout() {
                 borderRightColor={borderColor}
             >
                 <Box p={4} display="flex" justifyContent="center" alignItems="center">
-                    <Image src="/icon.svg" alt="Naho Icon" boxSize="48px" mr={2} />
+                    <Image src="/icon.svg" alt="Naho Icon" w="16" h="12" mr={2} />
                 </Box>
                 <Box flex={1} overflowY="auto">
                     <Sidebar onNavigate={handleNavigation} onLogout={handleLogout} isLogoutLoading={isLogoutLoading} />

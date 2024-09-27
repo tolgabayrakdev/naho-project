@@ -57,7 +57,7 @@ export default function Pages() {
   useEffect(() => {
     const fetchFeedbackPages = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/feedback-page');
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page');
         const data = await response.json();
         console.log(data);
 
@@ -117,7 +117,7 @@ export default function Pages() {
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     };
 
-    fetch('http://localhost:8000/api/feedback-page', {
+    fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-page', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ export default function Pages() {
   };
 
   const handleDeletePage = (id: string) => {
-    fetch(`http://localhost:8000/api/feedback-page/${id}`, {
+    fetch(import.meta.env.VITE_BACKEND_URL + `/api/feedback-page/${id}`, {
       method: 'DELETE',
       credentials: "include"
     })

@@ -37,8 +37,8 @@ export default function Index() {
     const fetchData = async () => {
       try {
         const [statsResponse, monthlyStatsResponse] = await Promise.all([
-          fetch('http://localhost:8000/api/feedback-statics', { credentials: 'include' }),
-          fetch('http://localhost:8000/api/feedback-statics/monthly', { credentials: 'include' })
+          fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-statics', { credentials: 'include' }),
+          fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback-statics/monthly', { credentials: 'include' })
         ]);
 
         if (!statsResponse.ok || !monthlyStatsResponse.ok) {
@@ -68,34 +68,34 @@ export default function Index() {
     <div>
       <Heading size="lg" mb={4}>Dashboard</Heading>
       <SimpleGrid p="2" columns={{ base: 2, md: 3, lg: 5 }} spacing={4} mb={6}>
-        <StatCard 
-          title="Toplam Geri Bildirim" 
-          value={feedbackStats?.total_feedback_count || 0} 
-          icon={FaComments} 
+        <StatCard
+          title="Toplam Geri Bildirim"
+          value={feedbackStats?.total_feedback_count || 0}
+          icon={FaComments}
           color="blue.500"
         />
-        <StatCard 
-          title="Şikayetler" 
-          value={feedbackStats?.complaint || 0} 
-          icon={FaExclamationCircle} 
+        <StatCard
+          title="Şikayetler"
+          value={feedbackStats?.complaint || 0}
+          icon={FaExclamationCircle}
           color="red.500"
         />
-        <StatCard 
-          title="Öneriler" 
-          value={feedbackStats?.suggestion || 0} 
-          icon={FaLightbulb} 
+        <StatCard
+          title="Öneriler"
+          value={feedbackStats?.suggestion || 0}
+          icon={FaLightbulb}
           color="yellow.500"
         />
-        <StatCard 
-          title="İstekler" 
-          value={feedbackStats?.request || 0} 
-          icon={FaQuestionCircle} 
+        <StatCard
+          title="İstekler"
+          value={feedbackStats?.request || 0}
+          icon={FaQuestionCircle}
           color="purple.500"
         />
-        <StatCard 
-          title="Teşekkürler" 
-          value={feedbackStats?.compliment || 0} 
-          icon={FaSmile} 
+        <StatCard
+          title="Teşekkürler"
+          value={feedbackStats?.compliment || 0}
+          icon={FaSmile}
           color="green.500"
         />
       </SimpleGrid>

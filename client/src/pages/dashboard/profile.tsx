@@ -58,7 +58,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/auth/verify", {
+                const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/auth/verify", {
                     method: "POST",
                     credentials: "include"
                 });
@@ -88,7 +88,7 @@ const Profile = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/user/profile', {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/profile', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ const Profile = () => {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/user/delete-account', {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/delete-account', {
                 method: 'DELETE',
                 credentials: 'include',
             });
@@ -196,7 +196,7 @@ const Profile = () => {
     const handleChangePassword = async () => {
         if (validatePasswordChange()) {
             try {
-                const response = await fetch('http://localhost:8000/api/user/change-password', {
+                const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/change-password', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',

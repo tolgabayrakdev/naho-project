@@ -77,7 +77,7 @@ export default function FeedbackForm() {
   useEffect(() => {
     const fetchFeedbackPage = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/feedback-page/${token}`, {
+        const response = await fetch(import.meta.env.VITE_BACKEND_URL + `/api/feedback-page/${token}`, {
           method: "GET",
           credentials: "include"
         });
