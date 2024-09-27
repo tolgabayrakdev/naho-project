@@ -22,6 +22,17 @@ type AnalysisResult = {
   [key: string]: number;
 };
 
+// Basit bir benzerlik kontrolü fonksiyonu
+function areSimilarSentences(str1: string, str2: string): boolean {
+  const words1 = str1.toLowerCase().split(/\s+/).filter(word => word.length > 3);
+  const words2 = str2.toLowerCase().split(/\s+/).filter(word => word.length > 3);
+  
+  const commonWords = words1.filter(word => words2.includes(word));
+  const similarityRatio = commonWords.length / Math.max(words1.length, words2.length);
+  
+  return similarityRatio > 0.5; // Benzerlik eşiği
+}
+
 export default function Index() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
@@ -62,25 +73,41 @@ export default function Index() {
 
   const analyzeFeedbacks = () => {
     setAnalyzing(true);
-    const wordCounts: AnalysisResult = {};
+    const sentenceGroups: { [key: string]: string[] } = {};
 
-    // Analiz işlemini bir Promise içine alıyoruz
     const performAnalysis = new Promise<void>((resolve) => {
       feedbacks.forEach(feedback => {
-        const words = feedback.content.toLowerCase().split(/\s+/);
-        words.forEach(word => {
-          if (word.length > 3) {
-            wordCounts[word] = (wordCounts[word] || 0) + 1;
+        const sentences = feedback.content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        sentences.forEach(sentence => {
+          const trimmedSentence = sentence.trim();
+          if (trimmedSentence.split(/\s+/).length > 2) { // En az 3 kelimelik cümleleri al
+            let foundGroup = false;
+            for (const [groupKey, sentences] of Object.entries(sentenceGroups)) {
+              if (areSimilarSentences(trimmedSentence, groupKey)) {
+                sentences.push(trimmedSentence);
+                foundGroup = true;
+                break;
+              }
+            }
+            if (!foundGroup) {
+              sentenceGroups[trimmedSentence] = [trimmedSentence];
+            }
           }
         });
       });
 
-      const sortedWords = Object.entries(wordCounts)
+      const analysisResult: AnalysisResult = {};
+      for (const [groupKey, sentences] of Object.entries(sentenceGroups)) {
+        if (sentences.length >= 3) { // En az 3 kez tekrar eden cümle grupları
+          analysisResult[groupKey] = sentences.length;
+        }
+      }
+
+      const sortedSentences = Object.entries(analysisResult)
         .sort(([, a], [, b]) => b - a);
 
-      // 5 saniye sonra resolve olacak
       setTimeout(() => {
-        setAnalysisResult(Object.fromEntries(sortedWords));
+        setAnalysisResult(Object.fromEntries(sortedSentences));
         resolve();
       }, 5000);
     });
@@ -117,8 +144,8 @@ export default function Index() {
   const downloadCSV = () => {
     if (!analysisResult) return;
 
-    const csvContent = "Kelime,Tekrar Sayısı\n" + Object.entries(analysisResult)
-      .map(([word, count]) => `"${word}",${count}`)
+    const csvContent = "Cümle,Tekrar Sayısı\n" + Object.entries(analysisResult)
+      .map(([sentence, count]) => `"${sentence.replace(/"/g, '""')}",${count}`)
       .join("\n");
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -136,11 +163,11 @@ export default function Index() {
 
   return (
     <Box p={5}>
-      <Heading as="h2" size="lg" mb={5}>
-        Geri Bildirim Raporu
+      <Heading as="h2" size="lg" mb={5} textAlign="center">
+        Geri Bildirim Raporu Oluştur
       </Heading>
       <VStack spacing={4} align="stretch">
-        <Box>
+        <Box display="flex" justifyContent="center">
           <Button
             size="sm"
             onClick={fetchFeedbacks}
@@ -171,7 +198,7 @@ export default function Index() {
         </Box>
 
         {feedbacks.length > 0 && (
-          <Text fontSize="md" fontWeight="bold">
+          <Text fontSize="md" fontWeight="bold" textAlign="center">
             Toplam Geri Bildirim Sayısı: {feedbacks.length}
           </Text>
         )}
@@ -185,7 +212,7 @@ export default function Index() {
 
         {analysisResult && (
           <Box>
-            <Heading as="h4" size="sm" mb={3}>
+            <Heading as="h4" size="sm" mb={3} textAlign="center">
               Analiz Sonuçları
             </Heading>
             <HStack mb={4} spacing={2}>
@@ -205,10 +232,10 @@ export default function Index() {
                 <option value="50">50</option>
               </Select>
             </HStack>
-            <SimpleGrid columns={[2, null, 3]} spacing={2}>
-              {paginatedResults.map(([word, count]) => (
-                <Box key={word} p={2} bg="gray.50" borderRadius="md" fontSize="sm">
-                  <Text fontWeight="medium">{word}:</Text>
+            <SimpleGrid columns={[1, null, 2]} spacing={2}>
+              {paginatedResults.map(([sentence, count]) => (
+                <Box key={sentence} p={2} bg="gray.50" borderRadius="md" fontSize="sm">
+                  <Text fontWeight="medium">{sentence}</Text>
                   <Text>{count} kez</Text>
                 </Box>
               ))}

@@ -24,7 +24,7 @@ import {
 import { HamburgerIcon, SunIcon, MoonIcon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
 import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiHome, BiNetworkChart, BiUser } from 'react-icons/bi'
-import { BsFileEarmarkDiff, BsFileSlides } from 'react-icons/bs'
+import { BsFileEarmarkDiff } from 'react-icons/bs'
 
 const NavItem = ({ icon, children, to, onClick, hasSubItems = false, isOpen, onToggle }: { icon: React.ReactNode, children: React.ReactNode, to?: string, onClick?: (to: string) => void, hasSubItems?: boolean, isOpen?: boolean, onToggle?: () => void }) => {
     const location = useLocation()
@@ -103,9 +103,6 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                 <Text fontWeight="bold" mb={2}>Rapor İşlemleri</Text>
                 <NavItem icon={<BsFileEarmarkDiff />} to="/dashboard/reports" onClick={onNavigate}>
                     Rapor Oluştur
-                </NavItem>
-                <NavItem icon={<BsFileSlides />} to="/design/web" onClick={onNavigate}>
-                    Rapor Analizi
                 </NavItem>
 
             </Box>
