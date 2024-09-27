@@ -85,8 +85,8 @@ export default function Pages() {
       setTitleError('');
     }
 
-    if (newDescription.split(/\s+/).length < 10) {
-      setDescriptionError('Açıklama en az 10 kelime içermelidir.');
+    if (newDescription.split(/\s+/).length < 5) {
+      setDescriptionError('Açıklama en az 5 kelime içermelidir.');
       isValid = false;
     } else {
       setDescriptionError('');
@@ -303,7 +303,7 @@ export default function Pages() {
           <ModalHeader>Geri Bildirim Sayfasını Sil</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Bu sayfayı silmek istediğinizden emin misiniz?</Text>
+            <Text>Bu sayfayı silmek istediğinizden emin misiniz? Bu sayfa ile ilgili ön izleme sayfalarıda beraberinde silinecektir.</Text>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="red" mr={3} onClick={() => handleDeletePage(pageToDelete!)}>

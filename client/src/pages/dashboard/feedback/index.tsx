@@ -150,7 +150,7 @@ export default function Index() {
   };
 
   const handleDeleteAll = () => {
-    fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback/user-feedbacks', {
+    fetch(import.meta.env.VITE_BACKEND_URL + '/api/feedback', {
       method: "DELETE",
       credentials: "include"
     })

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from ..schema.feedback_page_schema import FeedbackPageCreate, FeedbackPageUpdate
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
-from ..model import FeedbackPage, User
+from ..model import FeedbackPage, User, PreviewPage
 from datetime import datetime, timedelta
 import uuid
 
@@ -64,12 +64,17 @@ class FeedbackPageService:
                 db.query(FeedbackPage).filter(FeedbackPage.id == feedback_id).first()
             )
             if feedback:
+                # İlişkili preview_pages kayıtlarını sil
+                db.query(PreviewPage).filter(PreviewPage.feedback_page_id == feedback_id).delete()
+                
+                # Şimdi feedback_page'i silebiliriz
                 db.delete(feedback)
                 db.commit()
-                return {"message": "Feedback deleted"}
+                return {"message": "Feedback and related previews deleted"}
             else:
                 raise HTTPException(status_code=404, detail="Feedback not found")
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
+            print(e)
             db.rollback()
             raise HTTPException(
                 status_code=500, detail="An unexpected server error occurred."

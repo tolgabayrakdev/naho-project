@@ -176,6 +176,28 @@ export default function PreviewPage() {
 
 
   const handlePublish = async () => {
+    if (page.title.length < 3) {
+      toast({
+        title: "Başlık çok kısa.",
+        description: "Başlık en az 3 karakter olmalıdır.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    if (page.description.length < 10) {
+      toast({
+        title: "Açıklama çok kısa.",
+        description: "Açıklama en az 10 karakter olmalıdır.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     if (!page.feedback_page_id) {
       toast({
         title: "Lütfen bir feedback sayfası seçin.",
