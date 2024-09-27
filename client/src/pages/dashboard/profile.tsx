@@ -240,7 +240,10 @@ const Profile = () => {
     return (
         <>
             <Box>
-                <Heading size="lg" mb={4}>Profil</Heading>
+                <Box width="fit-content">
+                    <Heading color="blue.600" size="lg" mb={2}>Profil</Heading>
+                    <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
+                </Box>
                 <Tabs variant="enclosed">
                     <TabList>
                         <Tab>Profil Bilgileri</Tab>

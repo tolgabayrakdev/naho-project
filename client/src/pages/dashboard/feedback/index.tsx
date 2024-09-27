@@ -32,6 +32,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Divider,
 } from '@chakra-ui/react';
 import { DeleteIcon, ViewIcon } from '@chakra-ui/icons';
 
@@ -202,7 +203,10 @@ export default function Index() {
 
   return (
     <Box p={5}>
-      <Heading mb={5}>Geri Bildirimler</Heading>
+      <Box width="fit-content">
+      <Heading color="blue.600" size="lg" mb={2}>Geri Bildirimler</Heading>
+        <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
+      </Box>
       <Flex justifyContent="space-between" alignItems="center" mb={5}>
         <Text>Toplam: {isLoading ? <SkeletonText noOfLines={1} width="100px" /> : `${filteredItems.length} geri bildirim`}</Text>
         <Flex>

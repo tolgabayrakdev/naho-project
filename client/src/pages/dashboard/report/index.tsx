@@ -9,9 +9,15 @@ import {
   useToast,
   Progress,
   Input,
-  HStack,
   Select,
+  Container,
+  Flex,
+  Badge,
+  Divider,
+  IconButton,
+  Tooltip,
 } from '@chakra-ui/react';
+import { DownloadIcon, RepeatIcon, SearchIcon } from '@chakra-ui/icons';
 
 type Feedback = {
   id: string;
@@ -162,104 +168,119 @@ export default function Index() {
   };
 
   return (
-    <Box p={5}>
-      <Heading as="h2" size="lg" mb={5} textAlign="center">
-        Geri Bildirim Raporu Oluştur
-      </Heading>
-      <VStack spacing={4} align="stretch">
-        <Box display="flex" justifyContent="center">
-          <Button
-            size="sm"
-            onClick={fetchFeedbacks}
-            isLoading={loading}
-            colorScheme="blue"
-            mr={3}
-          >
-            Geri Bildirimleri Getir
-          </Button>
-          <Button
-            size="sm"
-            onClick={analyzeFeedbacks}
-            isLoading={analyzing}
-            isDisabled={feedbacks.length === 0}
-            colorScheme="green"
-            mr={3}
-          >
-            Analiz Et
-          </Button>
-          <Button
-            size="sm"
-            onClick={downloadCSV}
-            isDisabled={!analysisResult}
-            colorScheme="teal"
-          >
-            CSV İndir
-          </Button>
-        </Box>
+    <Container maxW="container.xl" py={10}>
+      <VStack spacing={8} align="stretch">
+        <Heading as="h2" size="xl" textAlign="center" color="blue.600">
+          Geri Bildirim Raporu
+        </Heading>
+
+        <Flex justifyContent="center" wrap="wrap" gap={4}>
+          <Tooltip label="Geri Bildirimleri Getir">
+            <Button
+              leftIcon={<RepeatIcon />}
+              onClick={fetchFeedbacks}
+              isLoading={loading}
+              colorScheme="blue"
+              variant="outline"
+            >
+              Geri Bildirimleri Getir
+            </Button>
+          </Tooltip>
+          <Tooltip label="Analiz Et">
+            <Button
+              leftIcon={<SearchIcon />}
+              onClick={analyzeFeedbacks}
+              isLoading={analyzing}
+              isDisabled={feedbacks.length === 0}
+              colorScheme="green"
+              variant="outline"
+            >
+              Analiz Et
+            </Button>
+          </Tooltip>
+          <Tooltip label="CSV İndir">
+            <IconButton
+              icon={<DownloadIcon />}
+              onClick={downloadCSV}
+              isDisabled={!analysisResult}
+              colorScheme="teal"
+              aria-label="CSV İndir"
+            />
+          </Tooltip>
+        </Flex>
 
         {feedbacks.length > 0 && (
-          <Text fontSize="md" fontWeight="bold" textAlign="center">
+          <Badge colorScheme="blue" p={2} borderRadius="full" alignSelf="center">
             Toplam Geri Bildirim Sayısı: {feedbacks.length}
-          </Text>
+          </Badge>
         )}
 
         {analyzing && (
-          <Box mt={4}>
-            <Progress size="xs" isIndeterminate />
-            <Text mt={2} fontSize="sm" textAlign="center">Analiz ediliyor, lütfen bekleyin...</Text>
+          <Box>
+            <Progress size="xs" isIndeterminate colorScheme="blue" />
+            <Text mt={2} fontSize="sm" textAlign="center" color="gray.600">
+              Analiz ediliyor, lütfen bekleyin...
+            </Text>
           </Box>
         )}
 
         {analysisResult && (
-          <Box>
-            <Heading as="h4" size="sm" mb={3} textAlign="center">
+          <Box bg="white" shadow="md" borderRadius="lg" p={6}>
+            <Heading as="h4" size="md" mb={6} textAlign="center" color="blue.600">
               Analiz Sonuçları
             </Heading>
-            <HStack mb={4} spacing={2}>
+            <Flex mb={6} gap={4} flexDirection={{ base: 'column', md: 'row' }}>
               <Input
-                size="sm"
                 placeholder="Kelime ara..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                flex={1}
               />
               <Select
-                size="sm"
                 value={itemsPerPage}
                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                width={{ base: 'full', md: '150px' }}
               >
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
+                <option value="10">10 Sonuç</option>
+                <option value="20">20 Sonuç</option>
+                <option value="50">50 Sonuç</option>
               </Select>
-            </HStack>
-            <SimpleGrid columns={[1, null, 2]} spacing={2}>
+            </Flex>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
               {paginatedResults.map(([sentence, count]) => (
-                <Box key={sentence} p={2} bg="gray.50" borderRadius="md" fontSize="sm">
-                  <Text fontWeight="medium">{sentence}</Text>
-                  <Text>{count} kez</Text>
+                <Box key={sentence} p={4} bg="gray.50" borderRadius="md" boxShadow="sm">
+                  <Text fontWeight="medium" mb={2} color="blue.700">{sentence}</Text>
+                  <Badge colorScheme="green">{count} kez</Badge>
                 </Box>
               ))}
             </SimpleGrid>
-            <HStack justifyContent="center" mt={4}>
+            <Divider my={6} />
+            <Flex justifyContent="center" alignItems="center" gap={4}>
               <Button
                 size="sm"
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 isDisabled={currentPage === 1}
+                colorScheme="blue"
+                variant="outline"
               >
                 Önceki
               </Button>
-              <Text fontSize="sm">{currentPage} / {pageCount}</Text>
+              <Text fontSize="sm" fontWeight="bold">
+                Sayfa {currentPage} / {pageCount}
+              </Text>
               <Button
                 size="sm"
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, pageCount))}
                 isDisabled={currentPage === pageCount}
+                colorScheme="blue"
+                variant="outline"
               >
                 Sonraki
               </Button>
-            </HStack>
+            </Flex>
           </Box>
         )}
       </VStack>
-    </Box>
+    </Container>
   );
 }

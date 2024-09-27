@@ -28,6 +28,7 @@ import {
   Link,
   Text,
   FormErrorMessage,
+  Divider,
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, CopyIcon, ViewIcon } from '@chakra-ui/icons';
 import { QRCodeSVG } from 'qrcode.react'; // QRCode importu
@@ -77,7 +78,7 @@ export default function Pages() {
 
   const validateInputs = () => {
     let isValid = true;
-    
+
     if (newTitle.length < 3) {
       setTitleError('Başlık en az 3 karakter olmalıdır.');
       isValid = false;
@@ -155,7 +156,7 @@ export default function Pages() {
           duration: 3000,
           isClosable: true,
         });
-      }); 
+      });
   };
 
   const handleDeletePage = (id: string) => {
@@ -211,7 +212,10 @@ export default function Pages() {
   return (
     <Box p={5}>
       <Flex justifyContent="space-between" alignItems="center" mb={5}>
-        <Heading size="lg">Geri Bildirim Sayfaları</Heading>
+        <Box width="fit-content">
+          <Heading mb={2} color="blue.600" size="lg">Geri Bildirim Sayfaları</Heading>
+          <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
+        </Box>
         <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={onOpen}>
           Yeni Sayfa Oluştur
         </Button>
