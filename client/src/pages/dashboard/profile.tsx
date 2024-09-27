@@ -21,8 +21,13 @@ import {
     Tab,
     TabPanel,
     FormErrorMessage,
+    Divider,
+    SimpleGrid,
+    Text,
+    Switch,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
+import { FaWhatsapp, FaInstagram, FaTwitter, FaFacebook } from 'react-icons/fa';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -43,10 +48,17 @@ const Profile = () => {
         confirmNewPassword: '',
     });
 
+    const [integrations, setIntegrations] = useState({
+        whatsapp: false,
+        instagram: false,
+        twitter: false,
+        facebook: false,
+    });
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/auth/verify", {
+                const response = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/auth/verify", {
                     method: "POST",
                     credentials: "include"
                 });
@@ -76,7 +88,7 @@ const Profile = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/user/profile', {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/profile', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -115,7 +127,7 @@ const Profile = () => {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch('http://localhost:8000/api/user/delete-account', {
+            const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/delete-account', {
                 method: 'DELETE',
                 credentials: 'include',
             });
@@ -184,7 +196,7 @@ const Profile = () => {
     const handleChangePassword = async () => {
         if (validatePasswordChange()) {
             try {
-                const response = await fetch('http://localhost:8000/api/user/change-password', {
+                const response = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/user/change-password', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -221,11 +233,18 @@ const Profile = () => {
         }
     };
 
+    const handleIntegrationChange = (integration: keyof typeof integrations) => {
+        setIntegrations(prev => ({ ...prev, [integration]: !prev[integration] }));
+    };
+
     return (
         <>
             <Box>
-                <Heading size="md" mb={6}>Profil</Heading>
-                <Tabs>
+                <Box width="fit-content">
+                    <Heading size="lg" mb={2}>Profil</Heading>
+                    <Divider borderWidth="1px" mb={4} />
+                </Box>
+                <Tabs variant="enclosed">
                     <TabList>
                         <Tab>Profil Bilgileri</Tab>
                         <Tab>Şifre Değiştir</Tab>
@@ -233,76 +252,112 @@ const Profile = () => {
 
                     <TabPanels>
                         <TabPanel>
-                            <VStack spacing={4} align="stretch">
-                                <FormControl>
-                                    <FormLabel>Kullanıcı Adı</FormLabel>
-                                    <Input
-                                        value={user.username}
-                                        onChange={(e) => setUser({ ...user, username: e.target.value })}
-                                        isReadOnly={!isEditing}
-                                    />
-                                </FormControl>
-                                <FormControl>
-                                    <FormLabel>E-posta</FormLabel>
-                                    <Input
-                                        value={user.email}
-                                        onChange={(e) => setUser({ ...user, email: e.target.value })}
-                                        isReadOnly={!isEditing}
-                                    />
-                                </FormControl>
-                                <HStack spacing={4}>
-                                    {isEditing ? (
-                                        <Button size="sm" colorScheme="blue" onClick={handleSave}>Kaydet</Button>
-                                    ) : (
-                                        <Button size="sm" onClick={handleEdit}>Düzenle</Button>
-                                    )}
-                                    <Button size="sm" colorScheme="red" onClick={() => setIsDeleteDialogOpen(true)}>
-                                        Hesabı Sil
-                                    </Button>
-                                </HStack>
-                            </VStack>
+                            <Box maxWidth="400px">
+                                <VStack spacing={4} align="stretch">
+                                    <FormControl>
+                                        <FormLabel>Kullanıcı Adı</FormLabel>
+                                        <Input
+                                            value={user.username}
+                                            onChange={(e) => setUser({ ...user, username: e.target.value })}
+                                            isReadOnly={!isEditing}
+                                        />
+                                    </FormControl>
+                                    <FormControl>
+                                        <FormLabel>E-posta</FormLabel>
+                                        <Input
+                                            value={user.email}
+                                            onChange={(e) => setUser({ ...user, email: e.target.value })}
+                                            isReadOnly={!isEditing}
+                                        />
+                                    </FormControl>
+                                    <HStack spacing={4}>
+                                        {isEditing ? (
+                                            <Button size="sm" colorScheme="blue" onClick={handleSave}>Kaydet</Button>
+                                        ) : (
+                                            <Button size="sm" onClick={handleEdit}>Düzenle</Button>
+                                        )}
+                                        <Button size="sm" colorScheme="red" onClick={() => setIsDeleteDialogOpen(true)}>
+                                            Hesabı Sil
+                                        </Button>
+                                    </HStack>
+                                </VStack>
+                            </Box>
                         </TabPanel>
                         <TabPanel>
-                            <VStack spacing={4} align="stretch">
-                                <FormControl isInvalid={!!errors.currentPassword}>
-                                    <FormLabel>Mevcut Şifre</FormLabel>
-                                    <Input
-                                        type="password"
-                                        value={user.currentPassword}
-                                        onChange={(e) => setUser({ ...user, currentPassword: e.target.value })}
-                                    />
-                                    <FormErrorMessage>{errors.currentPassword}</FormErrorMessage>
-                                </FormControl>
-                                <FormControl isInvalid={!!errors.newPassword}>
-                                    <FormLabel>Yeni Şifre</FormLabel>
-                                    <Input
-                                        type="password"
-                                        value={user.newPassword}
-                                        onChange={(e) => setUser({ ...user, newPassword: e.target.value })}
-                                    />
-                                    <FormErrorMessage>{errors.newPassword}</FormErrorMessage>
-                                </FormControl>
-                                <FormControl isInvalid={!!errors.confirmNewPassword}>
-                                    <FormLabel>Yeni Şifre (Tekrar)</FormLabel>
-                                    <Input
-                                        type="password"
-                                        value={user.confirmNewPassword}
-                                        onChange={(e) => setUser({ ...user, confirmNewPassword: e.target.value })}
-                                    />
-                                    <FormErrorMessage>{errors.confirmNewPassword}</FormErrorMessage>
-                                </FormControl>
-                                <Button
-                                    size="sm"
-                                    colorScheme="green"
-                                    onClick={handleChangePassword}
-                                    width="150px" // Burada genişliği sınırladık
-                                >
-                                    Şifreyi Değiştir
-                                </Button>
-                            </VStack>
+                            <Box maxWidth="400px">
+                                <VStack spacing={4} align="stretch">
+                                    <FormControl isInvalid={!!errors.currentPassword}>
+                                        <FormLabel>Mevcut Şifre</FormLabel>
+                                        <Input
+                                            type="password"
+                                            value={user.currentPassword}
+                                            onChange={(e) => setUser({ ...user, currentPassword: e.target.value })}
+                                        />
+                                        <FormErrorMessage>{errors.currentPassword}</FormErrorMessage>
+                                    </FormControl>
+                                    <FormControl isInvalid={!!errors.newPassword}>
+                                        <FormLabel>Yeni Şifre</FormLabel>
+                                        <Input
+                                            type="password"
+                                            value={user.newPassword}
+                                            onChange={(e) => setUser({ ...user, newPassword: e.target.value })}
+                                        />
+                                        <FormErrorMessage>{errors.newPassword}</FormErrorMessage>
+                                    </FormControl>
+                                    <FormControl isInvalid={!!errors.confirmNewPassword}>
+                                        <FormLabel>Yeni Şifre (Tekrar)</FormLabel>
+                                        <Input
+                                            type="password"
+                                            value={user.confirmNewPassword}
+                                            onChange={(e) => setUser({ ...user, confirmNewPassword: e.target.value })}
+                                        />
+                                        <FormErrorMessage>{errors.confirmNewPassword}</FormErrorMessage>
+                                    </FormControl>
+                                    <Button
+                                        size="sm"
+                                        colorScheme="green"
+                                        onClick={handleChangePassword}
+                                        width="150px"
+                                    >
+                                        Şifreyi Değiştir
+                                    </Button>
+                                </VStack>
+                            </Box>
                         </TabPanel>
                     </TabPanels>
                 </Tabs>
+
+                <Divider my={8} />
+
+                <Box>
+                    <Heading size="md" mb={6}>Entegrasyonlar</Heading>
+                    <SimpleGrid columns={2} spacing={4}>
+                        <IntegrationItem
+                            icon={FaWhatsapp}
+                            name="WhatsApp"
+                            isActive={integrations.whatsapp}
+                            onChange={() => handleIntegrationChange('whatsapp')}
+                        />
+                        <IntegrationItem
+                            icon={FaInstagram}
+                            name="Instagram"
+                            isActive={integrations.instagram}
+                            onChange={() => handleIntegrationChange('instagram')}
+                        />
+                        <IntegrationItem
+                            icon={FaTwitter}
+                            name="Twitter"
+                            isActive={integrations.twitter}
+                            onChange={() => handleIntegrationChange('twitter')}
+                        />
+                        <IntegrationItem
+                            icon={FaFacebook}
+                            name="Facebook"
+                            isActive={integrations.facebook}
+                            onChange={() => handleIntegrationChange('facebook')}
+                        />
+                    </SimpleGrid>
+                </Box>
 
                 <AlertDialog
                     isOpen={isDeleteDialogOpen}
@@ -332,7 +387,25 @@ const Profile = () => {
                 </AlertDialog>
             </Box>
         </>
+    );
+};
 
+interface IntegrationItemProps {
+    icon: React.ElementType;
+    name: string;
+    isActive: boolean;
+    onChange: () => void;
+}
+
+const IntegrationItem: React.FC<IntegrationItemProps> = ({ icon: Icon, name, isActive, onChange }) => {
+    return (
+        <HStack justifyContent="space-between">
+            <HStack>
+                <Icon />
+                <Text>{name}</Text>
+            </HStack>
+            <Switch isChecked={isActive} onChange={onChange} />
+        </HStack>
     );
 };
 

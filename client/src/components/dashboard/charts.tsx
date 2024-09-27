@@ -1,57 +1,86 @@
 import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Box, SimpleGrid, Heading, Card, CardHeader, CardBody } from '@chakra-ui/react';
+import { Box, VStack, Heading, Card, CardHeader, CardBody, useColorModeValue } from '@chakra-ui/react';
 
-const data = [
-    { name: 'Jan', uv: 4000, pv: 2400, amt: 2400 },
-    { name: 'Feb', uv: 3000, pv: 1398, amt: 2210 },
-    { name: 'Mar', uv: 2000, pv: 9800, amt: 2290 },
-    { name: 'Apr', uv: 2780, pv: 3908, amt: 2000 },
-    { name: 'May', uv: 1890, pv: 4800, amt: 2181 },
-    { name: 'Jun', uv: 2390, pv: 3800, amt: 2500 },
-    { name: 'Jul', uv: 3490, pv: 4300, amt: 2100 },
-];
+interface MonthlyFeedbackStats {
+  [month: number]: {
+    complaint: number;
+    suggestion: number;
+    request: number;
+    compliment: number;
+  }
+}
 
-const Charts = () => {
+interface ChartsProps {
+  monthlyStats: MonthlyFeedbackStats | null;
+}
+
+const Charts: React.FC<ChartsProps> = ({ monthlyStats }) => {
+    const turkishMonths = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    const data = monthlyStats ? Object.entries(monthlyStats).map(([month, stats]) => ({
+        name: turkishMonths[parseInt(month) - 1],
+        Şikayet: stats.complaint,
+        Öneri: stats.suggestion,
+        İstek: stats.request,
+        Teşekkür: stats.compliment
+    })) : [];
+
+    // Dark mode uyumlu renkler
+    const bgColor = useColorModeValue('white', 'gray.800');
+    const textColor = useColorModeValue('gray.800', 'white');
+    const gridColor = useColorModeValue('#e0e0e0', '#4a4a4a');
+
+    // Yeni renkler
+    const colors = {
+        Şikayet: "#FF6B6B",
+        Öneri: "#FFA500",    // Turuncu
+        İstek: "#8A2BE2",    // Mor
+        Teşekkür: "#4CAF50"  // Yeşil
+    };
+
     return (
         <Box p={4}>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-                <Card>
+            <VStack spacing={6} align="stretch">
+                <Card bg={bgColor}>
                     <CardHeader>
-                        <Heading as="h3" size="md">Monthly User Activity</Heading>
+                        <Heading as="h3" size="sm" color={textColor}>Aylık Geri Bildirim Çizgi Grafiği</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>
                             <LineChart data={data}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
+                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                                <XAxis dataKey="name" stroke={textColor} />
+                                <YAxis stroke={textColor} />
+                                <Tooltip contentStyle={{ backgroundColor: bgColor, color: textColor }} />
                                 <Legend />
-                                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                                <Line type="monotone" dataKey="Şikayet" stroke={colors.Şikayet} />
+                                <Line type="monotone" dataKey="Öneri" stroke={colors.Öneri} />
+                                <Line type="monotone" dataKey="İstek" stroke={colors.İstek} />
+                                <Line type="monotone" dataKey="Teşekkür" stroke={colors.Teşekkür} />
                             </LineChart>
                         </ResponsiveContainer>
                     </CardBody>
                 </Card>
-                <Card>
+                <Card bg={bgColor}>
                     <CardHeader>
-                        <Heading as="h3" size="md">Revenue Comparison</Heading>
+                        <Heading as="h3" size="sm" color={textColor}>Ay Bazında Geri Bildirim Sütun Grafiği</Heading>
                     </CardHeader>
                     <CardBody>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={data}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
+                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                                <XAxis dataKey="name" stroke={textColor} />
+                                <YAxis stroke={textColor} />
+                                <Tooltip contentStyle={{ backgroundColor: bgColor, color: textColor }} />
                                 <Legend />
-                                <Bar dataKey="pv" fill="#8884d8" />
-                                <Bar dataKey="uv" fill="#82ca9d" />
+                                <Bar dataKey="Şikayet" fill={colors.Şikayet} />
+                                <Bar dataKey="Öneri" fill={colors.Öneri} />
+                                <Bar dataKey="İstek" fill={colors.İstek} />
+                                <Bar dataKey="Teşekkür" fill={colors.Teşekkür} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardBody>
                 </Card>
-            </SimpleGrid>
+            </VStack>
         </Box>
     );
 };

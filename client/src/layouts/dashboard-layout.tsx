@@ -17,12 +17,14 @@ import {
     useColorMode,
     useColorModeValue,
     Portal,
-    Collapse
+    Collapse,
+    Divider,
+    Image
 } from '@chakra-ui/react'
 import { HamburgerIcon, SunIcon, MoonIcon, ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons'
 import AuthWrapper from '../wrappers/auth-wrapper'
 import { BiCreditCard, BiCreditCardAlt, BiCreditCardFront, BiHome, BiNetworkChart, BiUser } from 'react-icons/bi'
-import { FcElectricity } from 'react-icons/fc'
+import { BsFileEarmarkDiff } from 'react-icons/bs'
 
 const NavItem = ({ icon, children, to, onClick, hasSubItems = false, isOpen, onToggle }: { icon: React.ReactNode, children: React.ReactNode, to?: string, onClick?: (to: string) => void, hasSubItems?: boolean, isOpen?: boolean, onToggle?: () => void }) => {
     const location = useLocation()
@@ -79,21 +81,30 @@ const Sidebar = ({ onNavigate, onLogout, isLogoutLoading }: { onNavigate: (to: s
                     isOpen={isNetworkOpen}
                     onToggle={() => setIsNetworkOpen(!isNetworkOpen)}
                 >
-                    Ağ İşlemleri
+                    Bildirim İşlemleri
                 </NavItem>
                 <Collapse in={isNetworkOpen} animateOpacity>
                     <Box pl={6} mt={1} borderLeft="1px" borderColor="gray.200">
-                        <NavItem icon={<BiCreditCardFront />} to="/dashboard/network/create" onClick={onNavigate}>
-                            Ağ Oluşturma
+                        <NavItem icon={<BiCreditCardFront />} to="/dashboard/feedbacks" onClick={onNavigate}>
+                            Geri Bildirimler
                         </NavItem>
-                        <NavItem icon={<BiCreditCard />} to="/dashboard/network/configure" onClick={onNavigate}>
-                            Ağ Yapılandırma
+                        <NavItem icon={<BiCreditCard />} to="/dashboard/feedback/pages" onClick={onNavigate}>
+                             Bildirim Sayfaları
                         </NavItem>
-                        <NavItem icon={<BiCreditCardAlt />} to="/dashboard/network/edit" onClick={onNavigate}>
-                            Ağ Düzenleme
+                        <NavItem icon={<BiCreditCardAlt />} to="/dashboard/feedback/preview-page" onClick={onNavigate}>
+                             Önizleme Sayfaları
                         </NavItem>
                     </Box>
                 </Collapse>
+
+                  
+                <Divider my={3} />
+                
+                <Text fontWeight="bold" mb={2}>Rapor İşlemleri</Text>
+                <NavItem icon={<BsFileEarmarkDiff />} to="/dashboard/reports" onClick={onNavigate}>
+                    Rapor Oluştur
+                </NavItem>
+
             </Box>
             <Box>
                 <Button
@@ -181,14 +192,13 @@ function DashboardLayout() {
                 position="fixed"
                 left={0}
                 top={0}
-                display={{ base: 'none', md: 'flex' }}
+                display={{ base: 'none', lg: 'flex' }}  // Changed from 'md' to 'lg'
                 flexDirection="column"
                 borderRightWidth="1px"
                 borderRightColor={borderColor}
             >
                 <Box p={4} display="flex" justifyContent="center" alignItems="center">
-                    <FcElectricity size="1.5em" />
-                    <Text fontSize="2xl" fontWeight="bold">Naho</Text>
+                    <Image src="/icon.svg" alt="Naho Icon" w="16" h="12" mr={2} />
                 </Box>
                 <Box flex={1} overflowY="auto">
                     <Sidebar onNavigate={handleNavigation} onLogout={handleLogout} isLogoutLoading={isLogoutLoading} />
@@ -196,12 +206,12 @@ function DashboardLayout() {
             </Box>
 
             {/* Main content area */}
-            <Flex flexDirection="column" flex={1} ml={{ base: 0, md: '250px' }}>
+            <Flex flexDirection="column" flex={1} ml={{ base: 0, lg: '250px' }}>
                 <Box flex={1} p={6} overflowY="auto" bg={contentBg}>
                     <IconButton
                         icon={<HamburgerIcon />}
                         onClick={onOpen}
-                        display={{ base: 'flex', md: 'none' }}
+                        display={{ base: 'flex', lg: 'none' }} 
                         aria-label="Open menu"
                         mb={4}
                     />

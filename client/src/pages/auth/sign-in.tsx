@@ -2,7 +2,7 @@ import { Box, Button, FormControl, FormLabel, Input, VStack, Heading, Text, Link
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const SignInSchema = Yup.object().shape({
     email: Yup.string().email('Geçersiz email').required('Email gerekli'),
@@ -13,6 +13,20 @@ const SignIn = () => {
     const toast = useToast();
     const navigate = useNavigate();
     const [isLoginSuccessful, setIsLoginSuccessful] = useState(false);
+
+
+    useEffect(() => {
+        const checkLoggedIn = async () => {
+            const res = await fetch(import.meta.env.VITE_BACKEND_URL + '/api/auth/verify', {
+                method: 'POST',
+                credentials: 'include',
+            });
+            if (res.status === 200) {
+                navigate('/dashboard')
+            }
+        }
+        checkLoggedIn();
+    }, [])
 
     const handleLogin = async (values: { email: string; password: string }, actions: any) => {
         try {
