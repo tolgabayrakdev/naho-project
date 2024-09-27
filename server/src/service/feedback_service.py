@@ -53,7 +53,7 @@ class FeedbackService:
             .filter(PreviewPage.user_id == user_id)
             .all()
         )
-        print(feedbacks)
+        print(f"Fetched feedbacks: {feedbacks}")
 
         def format_date(date):
             if isinstance(date, str):
