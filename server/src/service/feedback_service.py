@@ -47,4 +47,24 @@ class FeedbackService:
 
     @staticmethod
     def list_by_user(db: Session, user_id: int):
-        return db.query(Feedback).join(FeedbackPage).join(PreviewPage).filter(PreviewPage.user_id == user_id).all()
+        feedbacks = (
+            db.query(Feedback.id, Feedback.content, Feedback.customer_email, Feedback.feedback_type, Feedback.created_at, FeedbackPage.title)
+            .join(FeedbackPage)
+            .join(PreviewPage)
+            .filter(PreviewPage.user_id == user_id)
+            .all()
+        )
+
+        # Sonuçları istenen formatta dönebiliriz
+        result = [
+            {
+                "id": feedback.id,
+                "content": feedback.content,
+                "customer_email": feedback.customer_email,
+                "feedback_type": feedback.feedback_type,
+                "created_at": feedback.created_at,
+                "feedback_page_title": feedback.title  # feedback_page_id yerine title döndürülüyor
+            }
+            for feedback in feedbacks
+        ]
+        return result

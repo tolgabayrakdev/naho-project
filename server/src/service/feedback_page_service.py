@@ -73,8 +73,7 @@ class FeedbackPageService:
                 return {"message": "Feedback and related previews deleted"}
             else:
                 raise HTTPException(status_code=404, detail="Feedback not found")
-        except SQLAlchemyError as e:
-            print(e)
+        except SQLAlchemyError:
             db.rollback()
             raise HTTPException(
                 status_code=500, detail="An unexpected server error occurred."

@@ -41,6 +41,7 @@ type FeedbackItem = {
   id: number;
   customer_email: string;
   content: string;
+  feedback_page_title: string;
   feedback_type: FeedbackType;
   created_at: string;
 };
@@ -231,6 +232,7 @@ export default function Index() {
               <Th>Mesaj</Th>
               <Th>Tür</Th>
               <Th>Tarih</Th>
+              <Th>Bildirim Sayfası</Th>
               <Th>İşlem</Th>
             </Tr>
           </Thead>
@@ -253,6 +255,7 @@ export default function Index() {
                       </Tag>
                     </Td>
                     <Td>{item.created_at}</Td>
+                    <Td>{ item.feedback_page_title}</Td>
                     <Td>
                       <Flex>
                         <IconButton
