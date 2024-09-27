@@ -149,16 +149,6 @@ export default function Pages() {
           isClosable: true,
         });
       })
-      .catch(error => {
-        console.error('Error creating feedback page:', error);
-        toast({
-          title: "Geri bildirim sayfası oluşturulamadı.",
-          description: error.detail || "Beklenmeyen bir hata oluştu.",
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
-      });
   };
 
   const handleDeletePage = (id: string) => {

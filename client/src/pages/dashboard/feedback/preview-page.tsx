@@ -139,13 +139,7 @@ export default function PreviewPage() {
       const data = await response.json();
       setFeedbackPages(data);
     } catch (error) {
-      console.error('Error fetching feedback pages:', error);
-      toast({
-        title: "Feedback sayfaları yüklenemedi.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+
     }
   };
 
@@ -161,12 +155,8 @@ export default function PreviewPage() {
       setPreviewPages(data);
     } catch (error) {
       console.error('Error fetching preview pages:', error);
-      toast({
-        title: "Preview sayfaları yüklenemedi.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      // Hata durumunda boş bir dizi set ediyoruz ve toast mesajını kaldırıyoruz
+      setPreviewPages([]);
     }
   };
 
@@ -434,35 +424,38 @@ export default function PreviewPage() {
         Yayınla
       </Button>
 
-      <Heading as="h2" size="lg" mt={10} mb={6}>Oluşturulan Ön izleme Sayfaları</Heading>
-      
-      <Table size="sm" variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Başlık</Th>
-            <Th>Açıklama</Th>
-            <Th>Oluşturulma Tarihi</Th>
-            <Th>İşlemler</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {previewPages.map(previewPage => (
-            <Tr key={previewPage.id}>
-              <Td>{previewPage.title}</Td>
-              <Td>{previewPage.description}</Td>
-              <Td>{new Date(previewPage.created_at).toLocaleString()}</Td>
-              <Td>
-                <Button colorScheme="blue" size="sm" mr={2} onClick={() => handlePreview(previewPage.url_token)}>
-                  Önizle
-                </Button>
-                <Button colorScheme="red" size="sm" onClick={() => handleDeleteClick(previewPage.id)}>
-                  Sil
-                </Button>
-              </Td>
+      <Heading as="h2" size="lg" mt={8} mb={4}>Oluşturulan Önizleme Sayfaları</Heading>
+      {previewPages.length > 0 ? (
+        <Table size="sm" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Başlık</Th>
+              <Th>Açıklama</Th>
+              <Th>Oluşturulma Tarihi</Th>
+              <Th>İşlemler</Th>
             </Tr>
-          ))}
-        </Tbody>
-      </Table>
+          </Thead>
+          <Tbody>
+            {previewPages.map(previewPage => (
+              <Tr key={previewPage.id}>
+                <Td>{previewPage.title}</Td>
+                <Td>{previewPage.description}</Td>
+                <Td>{new Date(previewPage.created_at).toLocaleString()}</Td>
+                <Td>
+                  <Button colorScheme="blue" size="sm" mr={2} onClick={() => handlePreview(previewPage.url_token)}>
+                    Önizle
+                  </Button>
+                  <Button colorScheme="red" size="sm" onClick={() => handleDeleteClick(previewPage.id)}>
+                    Sil
+                  </Button>
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      ) : (
+        <Text>Henüz oluşturulmuş önizleme sayfası bulunmamaktadır.</Text>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
