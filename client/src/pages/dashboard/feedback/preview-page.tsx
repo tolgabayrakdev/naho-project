@@ -313,11 +313,11 @@ export default function PreviewPage() {
     <Container maxW="container.xl" p={3}>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
         <Box>
-        <Box width="fit-content">
-            <Heading color="blue.600" size="lg" mb={2}>Ön izleme Sayfası Oluştur</Heading>
-            <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
+          <Box width="fit-content">
+            <Heading size="lg" mb={2}>Ön izleme Sayfası Oluştur</Heading>
+            <Divider borderWidth="1px" mb={4} />
           </Box>
-                    <VStack spacing={3} align="stretch">
+          <VStack spacing={3} align="stretch">
             <FormControl size="sm">
               <FormLabel fontSize="sm">Başlık</FormLabel>
               <Input name="title" value={page.title} onChange={handleInputChange} size="sm" />
@@ -434,7 +434,8 @@ export default function PreviewPage() {
         Yayınla
       </Button>
 
-      <Heading color="blue.600" as="h2" size="lg" mt={8} mb={4}>Oluşturulan Ön izleme Sayfaları</Heading>
+      <Heading as="h2" size="lg" mt={10} mb={6}>Oluşturulan Ön izleme Sayfaları</Heading>
+      
       <Table size="sm" variant="simple">
         <Thead>
           <Tr>

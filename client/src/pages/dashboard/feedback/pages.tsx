@@ -213,8 +213,8 @@ export default function Pages() {
     <Box p={5}>
       <Flex justifyContent="space-between" alignItems="center" mb={5}>
         <Box width="fit-content">
-          <Heading mb={2} color="blue.600" size="lg">Geri Bildirim Sayfaları</Heading>
-          <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
+          <Heading mb={2}  size="lg">Geri Bildirim Sayfaları</Heading>
+          <Divider borderWidth="1px" mb={4} />
         </Box>
         <Button leftIcon={<AddIcon />} colorScheme="blue" onClick={onOpen}>
           Yeni Sayfa Oluştur

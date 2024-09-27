@@ -67,8 +67,8 @@ export default function Index() {
   return (
     <div>
       <Box width="fit-content">
-        <Heading color="blue.600" size="lg" mb={2}>Dashboard</Heading>
-        <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
+        <Heading size="lg" mb={2}>Dashboard</Heading>
+        <Divider  borderWidth="1px" mb={4} />
       </Box>
       <SimpleGrid p="2" columns={{ base: 2, md: 3, lg: 5 }} spacing={4} mb={6}>
         <StatCard

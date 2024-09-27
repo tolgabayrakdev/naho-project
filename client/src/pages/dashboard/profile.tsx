@@ -241,8 +241,8 @@ const Profile = () => {
         <>
             <Box>
                 <Box width="fit-content">
-                    <Heading color="blue.600" size="lg" mb={2}>Profil</Heading>
-                    <Divider borderColor="blue.600" borderWidth="1px" mb={4} />
+                    <Heading size="lg" mb={2}>Profil</Heading>
+                    <Divider borderWidth="1px" mb={4} />
                 </Box>
                 <Tabs variant="enclosed">
                     <TabList>
