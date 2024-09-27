@@ -4,7 +4,7 @@ import Loading from '../components/loading';
 
 function AuthWrapper(WrappedComponent: any) {
     const Wrapper = (props: any) => {
-        const [loogedIn, setLoggedIn] = useState(false);
+        const [loggedIn, setLoggedIn] = useState(false);
         const [loading, setLoading] = useState(true);
         const [accessDenied, setAccessDenied] = useState(false);
         const navigate = useNavigate();
@@ -42,7 +42,7 @@ function AuthWrapper(WrappedComponent: any) {
                 navigate('/sign-in');
             }, 1000);
         }
-        return <WrappedComponent loggedIn={loogedIn} {...props} />;
+        return <WrappedComponent loggedIn={loggedIn} {...props} />;
     };
     return Wrapper;
 }
