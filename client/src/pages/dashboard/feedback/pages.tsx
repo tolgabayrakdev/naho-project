@@ -85,7 +85,7 @@ export default function Pages() {
       setTitleError('');
     }
 
-    if (newDescription.split(/\s+/).length < 5) {
+    if (newDescription.length < 5) {
       setDescriptionError('Açıklama en az 5 kelime içermelidir.');
       isValid = false;
     } else {

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from ..model import Feedback, FeedbackPage, PreviewPage
 from fastapi import HTTPException
 from sqlalchemy.exc import SQLAlchemyError
-
+from datetime import datetime
 
 class FeedbackService:
 
@@ -50,20 +50,24 @@ class FeedbackService:
         feedbacks = (
             db.query(Feedback.id, Feedback.content, Feedback.customer_email, Feedback.feedback_type, Feedback.created_at, FeedbackPage.title)
             .join(FeedbackPage)
-            .join(PreviewPage)
             .filter(PreviewPage.user_id == user_id)
             .all()
         )
+        print(feedbacks)
 
-        # Sonuçları istenen formatta dönebiliriz
+        def format_date(date):
+            if isinstance(date, str):
+                date = datetime.fromisoformat(date)
+            return date.strftime("%d.%m.%Y %H:%M")
+
         result = [
             {
                 "id": feedback.id,
                 "content": feedback.content,
                 "customer_email": feedback.customer_email,
                 "feedback_type": feedback.feedback_type,
-                "created_at": feedback.created_at,
-                "feedback_page_title": feedback.title  # feedback_page_id yerine title döndürülüyor
+                "created_at": format_date(feedback.created_at),
+                "feedback_page_title": feedback.title
             }
             for feedback in feedbacks
         ]
